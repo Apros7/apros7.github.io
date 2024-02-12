@@ -14,7 +14,7 @@ h1 {
 }
 
 p {
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .container {
@@ -89,8 +89,8 @@ p {
     background-color: #ffffff;
     border: 1px solid #D3D3D3; 
     border-radius: 20px;
-    width: 200px; 
-    height: 200px; 
+    width: 210px; 
+    height: 210px; 
     text-align: center;
     align-items: center;
     justify-content: center; 
