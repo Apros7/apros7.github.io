@@ -1,0 +1,98 @@
+body {
+    font-family: "Space Mono", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+p, h1, h3, a {
+    font-family: "Space Mono", sans-serif;
+    color: #707070
+}
+
+.container {
+    width: 50%;
+    margin: 20px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container_single {
+    width: 50%;
+    margin: 20px auto;
+}
+
+.content {
+    width: 100%;
+}
+.content h1 {
+    color: #181818;
+    margin-bottom: 10px;
+    margin-right: 0px;
+}
+.content p {
+    line-height: 1.6;
+    margin: 5px
+}
+
+.image {
+    margin-top: 40px;
+    margin-left: 10px;
+    width: 40%;
+    text-align: center;
+}
+.image img {
+    max-width: 60%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.buttons {
+    width: 50%;
+    display: flex;
+    align-items: center;
+}
+
+.button {
+    background-color: #ffffff;
+    border: 1px solid #D3D3D3; 
+    border-radius: 5px;
+    padding: 10px 13px;
+    margin-right: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.button img {
+    width: 20px;
+    height: 20px;
+}
+
+.project-container {
+    width: 50%;
+    margin: 20px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.project {
+    background-color: #ffffff;
+    border: 1px solid #D3D3D3; 
+    border-radius: 20px;
+    width: 250px; 
+    height: 250px; 
+    text-align: center;
+    align-items: center;
+    justify-content: center; 
+}
+
+.project h1 {
+    color: #181818;
+    margin-bottom: 10px;
+}
+
+.project p {
+    margin: 10px;
+}
