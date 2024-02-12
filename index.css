@@ -9,6 +9,14 @@ p, h1, h3, a {
     color: #707070
 }
 
+h1 {
+    font-size: 28px;
+}
+
+p {
+    font-size: 14px;
+}
+
 .container {
     width: 50%;
     margin: 20px auto;
@@ -42,7 +50,7 @@ p, h1, h3, a {
     text-align: center;
 }
 .image img {
-    max-width: 60%;
+    max-width: 50%;
     height: auto;
     border-radius: 10px;
 }
@@ -81,8 +89,8 @@ p, h1, h3, a {
     background-color: #ffffff;
     border: 1px solid #D3D3D3; 
     border-radius: 20px;
-    width: 250px; 
-    height: 250px; 
+    width: 230px; 
+    height: 230px; 
     text-align: center;
     align-items: center;
     justify-content: center; 
