@@ -87,8 +87,40 @@ p {
 
 .project {
     background-color: #ffffff;
-    border: 1px solid #D3D3D3; 
+    border: 2px solid #a6a6a6; 
     border-radius: 20px;
+    width: 225px; 
+    height: 225px; 
+    text-align: center;
+    align-items: center;
+    justify-content: center; 
+}
+
+.project-research {
+    background-color: #ffffff;
+    border: 2px solid #39b63c; 
+    border-radius: 20px;
+    width: 225px; 
+    height: 225px; 
+    text-align: center;
+    align-items: center;
+    justify-content: center; 
+}
+
+.project-robotics {
+    background-color: #ffffff;
+    border: 2px solid #c23636; 
+    border-radius: 20px;
+    width: 225px; 
+    height: 225px; 
+    text-align: center;
+    align-items: center;
+    justify-content: center; 
+}
+
+.project-nlp {
+    border-radius: 20px;
+    border: 2px solid #3f43b8; 
     width: 225px; 
     height: 225px; 
     text-align: center;
