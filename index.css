@@ -72,6 +72,26 @@ p {
     align-items: center;
 }
 
+.button_scroll_down {
+    background-color: #ffffff;
+    border: 1px solid #D3D3D3; 
+    border-radius: 5px;
+    padding: 10px 13px;
+    margin-right: 10px;
+    cursor: pointer;
+    display: flex;
+    transition: background-color 0.3s ease;
+}
+
+.button_scroll_down img {
+    width: 20px;
+    height: 20px;
+}
+  
+html {
+    scroll-behavior: smooth;
+}
+
 .button img {
     width: 20px;
     height: 20px;
