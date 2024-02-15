@@ -200,3 +200,28 @@ html {
     font-size: 10px;
     margin: 3px;
 }
+
+.blog {
+    width: 50%;
+    margin: 20px auto;
+}
+
+.blog .date {
+    font-size: 12px;
+    color: #707070;
+    margin-bottom: 0px;
+}
+
+.blog .h2 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 18px;
+    color: #212121;
+    font-weight: bold;
+}
+
+.blog .desc {
+    margin-top: 10px;
+    font-size: 15px;
+    color: #212121
+}
