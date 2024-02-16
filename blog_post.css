@@ -78,3 +78,7 @@ table {
     text-align: center;
     align-items: center;
 }
+
+.inline-img {
+    width: 100%
+}

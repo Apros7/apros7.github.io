@@ -29,11 +29,11 @@
         </p>
         <hr>
         <div class="links">
-            <p style="margin-bottom: 10px;">Backend | Frontend | Word-add in | Datasets</p>
+            <p style="margin-bottom: 10px;">Backend | Frontend | Word add-in | Datasets</p>
             <a href="https://github.com/Apros7/GrammatikTAK"><img src="../github_logo.png" alt="GitHub" width="20" height="20"></a>
-            <a href="https://github.com/Apros7/GrammatiktakWebsite"><img src="../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 80px;"></a>
-            <a href="https://github.com/Apros7/GrammatiktakDesktop"><img src="../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 90px;"></a>
-            <a href="https://github.com/Apros7/GrammatiktakDatasets"><img src="../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 90px;"></a>
+            <a href="https://github.com/Apros7/GrammatiktakWebsite"><img src="../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 75px;"></a>
+            <a href="https://github.com/Apros7/GrammatiktakDesktop"><img src="../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 85px;"></a>
+            <a href="https://github.com/Apros7/GrammatiktakDatasets"><img src="../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 80px;"></a>
         </div>
         <hr>
         <p>
@@ -177,7 +177,7 @@
         </p>
 
         <pre>
-            <code>
+            <code class="python">
 app = Flask(__name__)
 CORS(app)
 @app.route("/", methods=["POST"])
@@ -321,11 +321,12 @@ def index():
             </tr>
         </table>
         <p>
-            Hopefully you get the idea.
+            Hopefully you get the idea. Here are the results:
         </p>
+        <img class="inline-img" src="fine_tune_models_results.png">
         <hr>
         <h3>
-            1.4 Training
+            1.5 Training
         </h3>
         <p>
             The dataset I used was about 46.000.000 elements long. The authers of BERT state that 
@@ -342,29 +343,114 @@ def index():
         </p>
         <hr>
         <h3>
-            1.4 Choosing the right model
+            1.6 Implementing into a module
+        </h3>
+        <p>
+            Inference is a bit more different than training, but not too difficult to implement. The full module is
+            implemented 
+            <a href="https://github.com/Apros7/GrammatikTAK/blob/main/GrammatiktakBackend/Utilities/model_utils.py">here</a>
+            . The most important thing is to argmax the outputs of the model as they are a from a softmax with 3 values, so
+            the one with the highest value, should be the prediction. You of cource has to create the dataset from your input sentence,
+            but besides that is shouldn't be too difficult: 
+        </p>
+        <pre>
+            <code class="python">
+def get_predictions(self, data : string):
+    dataset, split_indexes = self.get_dataset(data)
+    tokenized_data = self.tokenizer(dataset, padding=True, truncation=True)
+    final_dataset = Dataset(tokenized_data)
+    raw_predictions, _, _ = self.trainer.predict(final_dataset)
+    maxed_predictions = np.argmax(raw_predictions, axis=1)
+    return maxed_predictions
+            </code>
+        </pre>
+        <p>
+            1) Create your dataset from your input sentence, 2) tokenize, 3) format into tensor dataset (this can be
+            hard to get right, look at top of 
+            <a href="https://github.com/Apros7/GrammatikTAK/blob/main/GrammatiktakBackend/Utilities/model_utils.py">Utilities/model_utils.py</a> 
+            to see how I implemented it), 4) run your model, and 5) max the predictions.
+        </p>
+        <hr>
+        <h3>
+            1.7 Additional modules
         </h3>
         <p>
 
         </p>
         <hr>
         <h3>
-            1.4 Choosing the right model
+            2. The frontend
         </h3>
         <p>
 
         </p>
         <hr>
         <h3>
-            1.4 Choosing the right model
+            2.1 A simple webpage
+        </h3>
+        <p>
+
+        </p>
+        <hr>
+        <h3>
+            2.2 Putting it all together
+        </h3>
+        <p>
+
+        </p>
+        <hr>
+        <h3>
+            2.3 What about drift and true accuracy?
+        </h3>
+        <p>
+
+        </p>
+        <hr>
+        <h3>
+            3. Other
+        </h3>
+        <p>
+
+        </p>
+        <hr>
+        <h3>
+            3.1 High quality dataset
+        </h3>
+        <p>
+
+        </p>
+        <hr>
+        <h3>
+            3.2 Word add-in
         </h3>
         <p>
 
         </p>
         <hr>
         <p>
-            Thanks for reading. Should you have any questions, then please reach out to me. 
-            Good luck on your future projects :-)!
+            <strong>Credits: </strong> Many people are a reason this project came to be. They freely put their knowledge,
+            models and data in a easy to manage and understand format for everyone to use. They deserve a big thank you!
+            They did not in any way participate in this project and cannot be held accountable for anything related to this project.
+        </p>
+        <ul>
+            <li>
+                <strong>Leon Derczynski & Manuel R. Ciosici, ITU, Copenhagen: </strong>
+                For sharing such an amazing, large collection of danish text for NLP development.
+            </li>
+            <li>
+                <strong>Anita Ågerup Jervelund, dsn.dk: </strong>
+                For sharing her knowledge on spelling and grammar mistakes in danish primary/high schools.
+            </li>
+            <li>
+                <strong>certainly.io, Certainly, Malte Højmark-Bertelsen: </strong>
+                For developing and training a widely available danish BERT for the danish NLP community.
+            </li>
+        </ul>
+        <hr>
+        <p>
+            I'm not sure anyone will get this far in my post. If you did, I truly hope you gained insights reading this
+            for you to use in your future projects. Should you have any questions, then please reach out to me. Best of luck
+            in the future!
         </p>
     </div>
 </body>
