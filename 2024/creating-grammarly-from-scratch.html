@@ -18,7 +18,8 @@
 <body>
     <div class="blog">
         <a href="../index.html" class="back-button">&larr; Back</a>
-        <p class="date">Feb. 15 - 2024</p>
+        <p class="date">Original: Feb. 15 - 2024</p>
+        <p class="date">Last edited: Feb. 17 - 2024</p>
         <hr>
         <h1>Creating Grammarly from scratch</h1>
         <hr>
@@ -99,7 +100,7 @@
         Let's start with the easy ones...
         <hr>
         <h3>
-            1.1 A simple backend
+            1.1 Structure and utilities
         </h3>
         <p>
             The idea is to built simple modules to begin with in order to make sure the structure words before creating
@@ -165,27 +166,197 @@
         </p>
 
         <p>
-            Another thing needed before developing the modules are the main script. This should be 
+            To achieve this, the IndexFinder class was created. The class can be found on in Utilities/utils.py. 
+            When initialized, the input sentence is given. The IndexFinder is then passed around the modules, where
+            they have the opportunity to change the sentence based on their errors if needed. 
         </p>
 
+        <p>
+            Before moving on the actually creating the modules, let's get the main script running. It should be fairly easy.
+            Import the modules needed, initialize them, and make it work with a microweb framework like flask:
+        </p>
+
+        <pre>
+            <code>
+app = Flask(__name__)
+CORS(app)
+@app.route("/", methods=["POST"])
+
+def index():
+    data = request.get_json()
+    input = data["sentence"]
+    output = correct_input(input)
+    return jsonify(output)
+            </code>
+        </pre>
+
+        <p>
+            The correct input function can then correct however we want. CORS is needed to make it possible for the frontend
+            to connect to the backend. It's not the best for backend, but it will work (hopefully). If this were to be deployed
+            and recieve proper trafic, this part should probably be improved. 
         </p>
         <hr>
         <h3>
-            2. Training models
+            1.2. How hard can it be?
+        </h3>
+        <p>
+            The first module we will create is the <strong>excessive spaces</strong>. To preserve some space (and your time) I will not go too
+            much into detail about the code. I will explain the thought behind every module and how to achieve the functionality.
+            This module is fairly safe. We want to remove leading, consecutive and trailing spaces. Check all characters from the front.
+            If a space, suggest to delete. The same from the end to front. Then check each character. If more than one space, suggest
+            to change to only on space.
+        </p>
+        <p>
+            Next is <strong>double words.</strong> This could be a sentence like: "I really really like a a cake". This isn't super
+            valuable, but sometimes you won't see these simple errors. Now, there might be times when where the same word should
+            appear twice in a row. To find these, you should scrape through a large collection of text. For danish I used 
+            <a href="https://gigaword.dk/">Gigaword</a>, but for english many other options exist including wikipedia, 
+            <a href="https://github.com/Apros7/nltk">nltk</a> & <a href="https://github.com/explosion/spaCy">Spacy</a>.
+            We will have to scrape through large text chunks multiple times, so make sure to find a proper one. Ideally high 
+            quality like from newspapers, research rapports, etc.
+        </p>
+        <p>
+            After scraping through these, save all occurences where a word occurs twice in a row, and exclude them from checking.
+            We also don't want to correct names, so make the module able to get a list of named entities and exclude them too.
+            That should be it for this module.
+        </p>
+        <p>
+            The last module in this section is <strong>capitalization</strong>. This should take in the list of named entities
+            mentioned above. Now go through every word, if the previous word has a full stop, suggest capitalization if not already. 
+            If the words is in the list of named entities, suggest capitalization. This module should also suggest to not capitalize
+            words that does not meet the criteria. One important thing to now keep in mind is that this module has to be after
+            punctuation as the punctuation might change as a result of that module. 
+        </p>
+        <hr>
+        <h3>
+            1.3 Now to the fun part: training models
+        </h3>
+        <p>
+            Or at least close to. Before training models, we need data. Remember to sources I mentioned earlier? Time to put
+            them to good use. The important thing here is finding not only enough but text of extremely high quality. Go 
+            through some of it yourself to make sure it's good.
+        </p>
+        <p>
+            The dataset we create has to fit the model we choose. The first problem to tackle is punctuation.
+            So before doing anything, we have to figure out the appropriate model to use.
+        </p>
+        <hr>
+        <h3>
+            1.4 Choosing the right model
+        </h3>
+        <p>
+            The NLP space of deep learning models are booming, so we have plenty of models to take from. Or at least in 
+            english that is. In general, I see two ways of handling this problem (if something else comes to your mind, 
+            please reach out to me!)
+        </p>
+        <ul>
+            <li>
+                <strong>Seq-2-seq: </strong>You give the model a sentence and the model returns with a sentence with punctuation. 
+                The dataset has to be sentence to sentence, and you need A LOT OF data of high quality.
+            </li>
+            <li>
+                <a href="https://huggingface.co/docs/transformers/bertology"><strong>BERT</strong></a>:
+                You give the model a sentence and it returns with a classification. You need less data, but
+                the inference might be slower, so a smaller model is needed for a reasonable compute time, but large enough to have 
+                a high enough accuracy. (BERT is the only available in danish, but you can use whatever. RoBERTa, destilBERT, 
+                Electra or a smaller GPT)
+            </li>
+        </ul>
+        <p>
+            With Sep-2-sep the results were unreliable and the training time too costly, so I decided to move on with a danish, 
+            <a href="https://huggingface.co/Maltehb/danish-bert-botxo">pre-trained BERT</a>.. The dataset then had to be fairly simple
+            to create. (As of Feb 2024, seq-2-seq might actually be the right solution as the growth in GPT's has been enourmous, 
+            so definitely check that out! Checkout 
+            <a href="https://huggingface.co/models?pipeline_tag=text-classification&sort=trending">Huggingface</a> for models)
+        </p>
+        <p>
+            Before creating the dataset, let's decide on the scope. The scope are the size of the sentence that the is the input.
+            You give x words to the left, y words to the right. After the middle word is where you predict the punctuation.
+            In real time, there is only one way of knowing the right
+            scope -> testing! And that's certainly not cheap. I did small experiments to see what happened. The smaller the scope,
+            the faster the inference, the faster the training, but the lower the accuracy. So it's a fine line.
+        </p>
+        <p>
+            I initially tested with BERT (I logged most results 
+            <a href="https://github.com/Apros7/GrammatikTAK/tree/main/FineTuneModels">here</a>), but quickly switched to
+            distilBERT for about 2x faster inference. You generally need more information from the left, but also a bit from the right.
+            To achieve a high accuracy, but still fast inference, 15-5 seems to be the right scope. So given a sentence like this:
+        </p>
+        <p class="emphasize">
+            Hello, my name is Lucas. I like to train deep neural networks.
+        </p>
+        <p>
+            The dataset should look like this (here with a scope of 3-3 to show the idea).
+            Remember to delete both capitalization and punctuation as knowing this will skew the accuracy and may
+            not be present when correcting real sentences.
+        </p>
+        <table border="1" align="center">
+            <tr>
+                <th>input</th>
+                <th>output</th>
+            </tr>
+            <tr>
+                <td>PAD PAD hello my name is</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>PAD hello my name is Lucas</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>Hello my name is Lucas I</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>my name is Lucas I like</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>name is Lucas I like to</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td>...</td>
+                <td>...</td>
+            </tr>
+        </table>
+        <p>
+            Hopefully you get the idea.
+        </p>
+        <hr>
+        <h3>
+            1.4 Training
+        </h3>
+        <p>
+            The dataset I used was about 46.000.000 elements long. The authers of BERT state that 
+            <a href="https://mccormickml.com/2019/07/22/BERT-fine-tuning/">2-4 epochs of fine-tuning</a> is best.
+            I found that 2 epochs was enough, with only a small, non-significant (~0.1%) increase in accuracy when 
+            training for 3 epochs. This was not worth it compared to the cost, so I decided to stick with 2.
+        </p>
+        <p>
+            The distilBERT was trained on <a href="https://cloud.jarvislabs.ai/">Jarvislabs</a> renting 6 A100s for ~10 hours 
+            totaling ~120 dollars. The script used for training can be found at 
+            <a href="https://github.com/Apros7/GrammatikTAK/tree/main/FineTuneModels/FineTuneBert">FineTuneModels/FineTuneBert</a>.
+            This was certainly not the cheapest or best way to do it (As of Feb. 15, there should be must cheaper ways to 
+            fine-tune such a model with a much smaller training size aswell), but it got the job done.
+        </p>
+        <hr>
+        <h3>
+            1.4 Choosing the right model
         </h3>
         <p>
 
         </p>
         <hr>
         <h3>
-            3. Putting it all together
+            1.4 Choosing the right model
         </h3>
         <p>
 
         </p>
         <hr>
         <h3>
-            4. Final touches
+            1.4 Choosing the right model
         </h3>
         <p>
 

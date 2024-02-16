@@ -40,6 +40,10 @@ p, a, ul {
     font-size: 15px;
 }
 
+a {
+    color: blue
+}
+
 .blog {
     width: 50%;
     margin: 20px auto;
@@ -49,7 +53,21 @@ p, a, ul {
     font-size: 12px;
     color: #707070;
     margin-bottom: 0px;
+    margin-top: 0px;
     text-align: center;
+}
+
+.emphasize {
+    font-size: 14px;
+    border-left: 4px solid #aaa;
+    border-right: 4px solid #aaa;
+    padding: 2px 0px 2px 10px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+table {
+    width: 60%;
 }
 
 .back-button {
