@@ -5,13 +5,21 @@ body {
     padding: 0;
 }
 
-p, h1, h3, a {
+p, h1, h3, a, ul {
     font-family: "Space Mono", sans-serif;
     color:  #212121
 }
 
 .small {
-    font-size: 14px;
+    font-size: 12px;
+    color: #707070;
+}
+
+.sidenote {
+    font-size: 12px;
+    border-left: 4px solid #aaa;
+    padding: 2px 0px 2px 10px;
+    margin-bottom: 5px;
 }
 
 h3 {
@@ -28,8 +36,8 @@ h1 {
     font-weight: bold;
 }
 
-p {
-    font-size: 16px;
+p, a, ul {
+    font-size: 15px;
 }
 
 .blog {
@@ -46,4 +54,9 @@ p {
 
 .back-button {
     color: #707070;
+}
+
+.links {
+    text-align: center;
+    align-items: center;
 }

@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lucas Vilsen</title>
   <link rel="stylesheet" href="../blog_post.css">
+  <link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,6 +27,14 @@
             but the methodology and implementation should not be specific to the language.
         </p>
         <hr>
+        <div class="links">
+            <p style="margin-bottom: 10px;">Backend | Frontend | Word-add in | Datasets</p>
+            <a href="https://github.com/Apros7/GrammatikTAK"><img src="../github_logo.png" alt="GitHub" width="20" height="20"></a>
+            <a href="https://github.com/Apros7/GrammatiktakWebsite"><img src="../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 80px;"></a>
+            <a href="https://github.com/Apros7/GrammatiktakDesktop"><img src="../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 90px;"></a>
+            <a href="https://github.com/Apros7/GrammatiktakDatasets"><img src="../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 90px;"></a>
+        </div>
+        <hr>
         <p>
             To my knowledge, no one has tried to create a complete replica of Grammarly in another language and document 
             the process for others to learn from. I couldn't find anyone at least. So I decided to try this out myself.
@@ -31,6 +43,10 @@
         <p>
             This will be a long post. I tried to divide into chapters as much as possible. Read what you need, skip what 
             does not interest you. Here we go.
+        </p>
+        <p>
+            When reading this, please keep in mind that project took ~18 months to complete. So if you think something
+            happened too fast, you can safely assume it took a month or two to do :-).
         </p>
         <hr>
         <h3>
@@ -50,9 +66,107 @@
         </p>
         <hr>
         <h3>
-            1. The easy part
+            1. Where to begin?
         </h3>
         <p>
+            Before beginning developing anythging, let's define how this project should be built
+        </p>
+        <p class="sidenote">
+            In real time, what happened is I developed this complete project without doing any considerations around structure,
+            architecture, etc. This was a BIG mistake! So for that reason, let's tackle that issue first, and save 2-3 rounds
+            of having to do a complete rewriting of the entire codebase.
+        </p>
+        <p>
+            The idea is to built each correcter as modules to easily be added, modified or deleted. But what modules provides value?
+            After researching the topic, <a href="https://dsn.dk/wp-content/uploads/2021/01/Saadan.staver.vi_.pdf">one report</a> suggest
+            the main issues are (in no specific order):
+        </p>
+        <ul>
+            <li>Punctuation (main "," & ".")</li>
+            <li>Capilization</li>
+            <li>Spelling</li>
+            <li>Wrong tense</li>
+            <li>Lack of subject</li>
+            <li>Articles</li>
+            <li>Compound words</li>
+        </ul>
+        And some smaller ones I added:
+        <ul>
+            <li>Excessive spaces</li>
+            <li>Double words</li>
+            <li>Clarity?</li>
+        </ul>
+        Let's start with the easy ones...
+        <hr>
+        <h3>
+            1.1 A simple backend
+        </h3>
+        <p>
+            The idea is to built simple modules to begin with in order to make sure the structure words before creating
+            any substantial modules that then could have to be rewritten. The backend will be built in Python. It could be faster
+            but this makes it possible to use existing packages to simplify the backend a lot! First we will tackle:
+        <ul>
+            <li>Capitalization</li>
+            <li>Excessive spaces</li>
+            <li>Double words</li>
+        </ul>
+        <p>
+            Before developing any modules, let's build the outside structure. The modules are going to return a list of
+            Errors that they find, so let's start by making such a class. The classes Error and ErrorList are created as
+            some functionality is needed both for each error but also to add list of errors together.
+            (see utils/error_handling.py). The class Error can be summarized by in this main method:
+        </p>
+        <pre>
+            <code class="python">
+    def to_list(self, include_type=False):
+        self.is_healthy()
+        if self.wrong_word == self.right_word: 
+            print("ALERT: Error has the same wrong and right word, therefore skipped"); 
+            print(self.to_finalized_list()); 
+            return None
+        if include_type: 
+            return [self.wrong_word, self.right_word, self.indexes, self.description, self.get_type()]
+        return [self.wrong_word, self.right_word, self.indexes, self.description]>
+            </code>
+        </pre>
+        <p>
+            So what are the type? This helps with the problem of having multiple errors at the same place. Grammarly won't
+            give you multiple errors on the same word - they concat them, so that's we have to do too. The error_concatenator()
+            is a way for us to concat the errors together. This is a tedious, but rewarding process, and converts errors like this: 
+        </p>
+        <pre>
+            <code class="python">
+    [
+        ",", "", [18,19], 
+        "There should not be a comma before 'that'", "del_punc"
+    ]
+    +
+    [
+        "paul walker", "Paul Walker", [8,19], 
+        "'Paul Walker' should be capitalized", "add_cap"
+    ]
+
+    =>
+
+    [
+        "paul walker,", "Paul Walker", 
+        [8,19], 
+        "There should not be a comma before 'that'. 'Paul Walker' should be capitalized", 
+        "add_cap"
+    ]
+            </code>
+        </pre>
+
+        <p>
+            Some modules has to work on characters, some on words. Another issue is that some modules may depend on others to
+            make their predictions before others. So we need some way of converting from word indexes to characters indexes
+            for a frontend to work with. And we need those indexes to be converted to the correct indexes from the input sentence,
+            which could be different from the one each module is correcting. 
+        </p>
+
+        <p>
+            Another thing needed before developing the modules are the main script. This should be 
+        </p>
 
         </p>
         <hr>
