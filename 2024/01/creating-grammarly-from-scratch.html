@@ -23,8 +23,8 @@
         <h1>Creating Grammarly from scratch</h1>
         <hr>
         <p class="small">
-            Disclaimer: This Grammarly replica is built in Danish. The exact modules built here will be specific to Danish,
-            but the methodology and implementation should not be specific to the language.
+            Disclaimer: This Grammarly replica is built in Danish. The exact modules built will be specific to Danish,
+            but the methodology and implementation should be transferable to other languages.
         </p>
         <hr>
         <div class="links">
@@ -36,29 +36,30 @@
         </div>
         <hr>
         <p>
-            To my knowledge, no one has tried to create a complete replica of Grammarly in another language and document 
+            To my knowledge, no one has tried to create a complete replica of Grammarly for another language and document 
             the process for others to learn from. I couldn't find anyone at least. So I decided to try this out myself.
-            It's not easy, but definetely possible to get it to a stable and valuable state.
+            It's not easy, but definitely possible to get it to a stable and valuable state.
         </p>
         <p>
             This will be a long post. I tried to divide into chapters as much as possible. Read what you need, skip what 
             does not interest you. Here we go.
         </p>
         <p>
-            When reading this, please keep in mind that project took ~18 months to complete. So if you think something
-            happened too fast, you can safely assume it took a month or two to do :-).
+            When reading this, please keep in mind that project took ~18 months to complete. So if you think some parts
+            were seems quickly done, you can safely assume it took a month or two to execute :-).
         </p>
         <hr>
         <h3>
             0. The idea
         </h3>
         <p>
-            Building a complete replica of Grammarly is not possible and should not be the goal. What I find interesting is
+            Building a complete replica of Grammarly is not possible and will not be the goal. What I find interesting is
             trying to rebuild the core functionality to get an idea of how it works. So the main goal here is to figure out how to:
         </p>
         <ul>
             <li>Make simple checkers to help out with spellchecking, simple grammar rules and punctuation</li>
             <li>Build a bigger model to tackle some problem better (either spellchecking, punctuation or something else)</li>
+            <li>Develop a small, simple UI for users to interact with the project</li>
             <li>Hook everything up to work on the web & cloud</li>
         </ul>
         <p>
@@ -69,21 +70,21 @@
             1. Where to begin?
         </h3>
         <p>
-            Before beginning developing anythging, let's define how this project should be built
+            Before developing anything, let's define how this project should be built
         </p>
         <p class="sidenote">
-            In real time, what happened is I developed this complete project without doing any considerations around structure,
+            In real-time, what happened is I developed this complete project without making any considerations around structure,
             architecture, etc. This was a BIG mistake! So for that reason, let's tackle that issue first, and save 2-3 rounds
-            of having to do a complete rewriting of the entire codebase.
+            of complete rewriting of the entire codebase.
         </p>
         <p>
-            The idea is to built each correcter as modules to easily be added, modified or deleted. But what modules provides value?
-            After researching the topic, <a href="https://dsn.dk/wp-content/uploads/2021/01/Saadan.staver.vi_.pdf">one report</a> suggest
-            the main issues are (in no specific order):
+            The idea is to build each correcter as modules to easily be added, modified, or deleted. But what modules provide value?
+            After researching the topic, <a href="https://dsn.dk/wp-content/uploads/2021/01/Saadan.staver.vi_.pdf">one report</a> suggests
+            the main issues (in danish language) are (in no specific order):
         </p>
         <ul>
             <li>Punctuation (main "," & ".")</li>
-            <li>Capilization</li>
+            <li>Capitalization</li>
             <li>Spelling</li>
             <li>Wrong tense</li>
             <li>Lack of subject</li>
@@ -102,9 +103,10 @@
             1.1 Structure and utilities
         </h3>
         <p>
-            The idea is to built simple modules to begin with in order to make sure the structure words before creating
+            The idea is to build simple modules to begin with in order to make sure the structure works before creating
             any substantial modules that then could have to be rewritten. The backend will be built in Python. It could be faster
-            but this makes it possible to use existing packages to simplify the backend a lot! First we will tackle:
+            to do in other languages, and that's probably also the case for Grammarly, but this makes it possible to use 
+            existing packages to simplify the backend a lot! First, we will tackle:
         <ul>
             <li>Capitalization</li>
             <li>Excessive spaces</li>
@@ -113,8 +115,9 @@
         <p>
             Before developing any modules, let's build the outside structure. The modules are going to return a list of
             Errors that they find, so let's start by making such a class. The classes Error and ErrorList are created as
-            some functionality is needed both for each error but also to add list of errors together.
-            (see utils/error_handling.py). The class Error can be summarized by in this main method:
+            some functionality is needed both for each error and also to add lists of errors together.
+            <a href="https://github.com/Apros7/GrammatikTAK/blob/main/GrammatiktakBackend/Utilities/error_handling.py">(see utils/error_handling.py).</a> 
+            The class Error can be summarized in this main method:
         </p>
         <pre>
             <code class="python">
@@ -130,8 +133,9 @@
             </code>
         </pre>
         <p>
-            So what are the type? This helps with the problem of having multiple errors at the same place. Grammarly won't
-            give you multiple errors on the same word - they concat them, so that's we have to do too. The error_concatenator()
+            So what is the type of an error? This helps with the problem of having multiple errors at the same place. Grammarly won't
+            give you multiple errors on the same word - they concat them, so that's what have to do too. The 
+            <a href="https://github.com/Apros7/GrammatikTAK/blob/main/GrammatiktakBackend/Utilities/error_handling.py">error_concatenator()</a>
             is a way for us to concat the errors together. This is a tedious, but rewarding process, and converts errors like this: 
         </p>
         <pre>
@@ -158,21 +162,25 @@
         </pre>
 
         <p>
-            Some modules has to work on characters, some on words. Another issue is that some modules may depend on others to
-            make their predictions before others. So we need some way of converting from word indexes to characters indexes
-            for a frontend to work with. And we need those indexes to be converted to the correct indexes from the input sentence,
+            Let's now talk about indexing. Some modules have to work on characters, some on words. Another issue is that some 
+            modules may depend on other modules before being able to make their predictions.
+            So we need some way of converting from word indexes to character indexes to easily highlight the errors on the front end.
+            And we need those indexes to refer to the input sentence,
             which could be different from the one each module is correcting. 
         </p>
 
         <p>
-            To achieve this, the IndexFinder class was created. The class can be found on in Utilities/utils.py. 
-            When initialized, the input sentence is given. The IndexFinder is then passed around the modules, where
-            they have the opportunity to change the sentence based on their errors if needed. 
+            To achieve this, the 
+            <a href="https://github.com/Apros7/GrammatikTAK/blob/main/GrammatiktakBackend/Utilities/utils.py">IndexFinder</a>
+            class was created.  When initialized, the input sentence is given. The IndexFinder is then passed around the 
+            modules, where they have the opportunity to change the sentence based on their errors if needed. Whenever needed, 
+            word indexes can now be created from whatever sentence the module is using to character indexes for the input sentence.
         </p>
 
         <p>
-            Before moving on the actually creating the modules, let's get the main script running. It should be fairly easy.
-            Import the modules needed, initialize them, and make it work with a microweb framework like flask:
+            Before moving on to actually creating the modules, let's get the main script running. It should be fairly easy.
+            Import the modules needed, initialize them, and make them work with a microweb framework like Flask. 
+            The index function should look like:
         </p>
 
         <pre>
@@ -191,8 +199,8 @@ def index():
 
         <p>
             The correct input function can then correct however we want. CORS is needed to make it possible for the frontend
-            to connect to the backend. It's not the best for backend, but it will work (hopefully). If this were to be deployed
-            and recieve proper trafic, this part should probably be improved. 
+            to connect to the backend. Flask is properly not the best for a full production environment, but it should work for now. 
+            If this were to be deployed and receive proper traffic, this part should probably be improved. 
         </p>
         <hr>
         <h3>
@@ -201,30 +209,30 @@ def index():
         <p>
             The first module we will create is the <strong>excessive spaces</strong>. To preserve some space (and your time) I will not go too
             much into detail about the code. I will explain the thought behind every module and how to achieve the functionality.
-            This module is fairly safe. We want to remove leading, consecutive and trailing spaces. Check all characters from the front.
-            If a space, suggest to delete. The same from the end to front. Then check each character. If more than one space, suggest
-            to change to only on space.
+            This module is fairly straightforward. We want to remove leading, consecutive, and trailing spaces. Check all characters from front to back.
+            If a space, suggest to delete. Repeat from back to front. Then check each character. If more than one space, suggest
+            changing to only one space.
         </p>
         <p>
-            Next is <strong>Compound words.</strong> This could be a sentence like: "I really really like a a cake". This isn't super
-            valuable, but sometimes you won't see these simple errors. Now, there might be times when where the same word should
-            appear twice in a row. To find these, you should scrape through a large collection of text. For danish I used 
-            <a href="https://gigaword.dk/">Gigaword</a>, but for english many other options exist including wikipedia, 
+            Next is <strong>compound words.</strong> This could be a applied in a sentence like: "I really really like a a cake". This isn't super
+            valuable, but sometimes you won't see these simple errors. Now, there might be times when the same word should
+            appear twice in a row. To find these, you should scrape through a large collection of text. For Danish I used 
+            <a href="https://gigaword.dk/">Gigaword</a>, but for English many other options exist including Wikipedia, 
             <a href="https://github.com/Apros7/nltk">nltk</a> & <a href="https://github.com/explosion/spaCy">Spacy</a>.
             We will have to scrape through large text chunks multiple times, so make sure to find a proper one. Ideally high 
-            quality like from newspapers, research rapports, etc.
+            quality like from newspapers, research reports, etc.
         </p>
         <p>
-            After scraping through these, save all occurences where a word occurs twice in a row, and exclude them from checking.
+            After scraping through these, save all events where a word occurs twice in a row, and exclude them from checking.
             We also don't want to correct names, so make the module able to get a list of named entities and exclude them too.
             That should be it for this module.
         </p>
         <p>
             The last module in this section is <strong>capitalization</strong>. This should take in the list of named entities
             mentioned above. Now go through every word, if the previous word has a full stop, suggest capitalization if not already. 
-            If the words is in the list of named entities, suggest capitalization. This module should also suggest to not capitalize
-            words that does not meet the criteria. One important thing to now keep in mind is that this module has to be after
-            punctuation as the punctuation might change as a result of that module. 
+            If the word is in the list of named entities, suggest capitalization. This module should also suggest to not capitalize
+            words that do not meet the criteria. One important thing to now keep in mind is that this module has to be after
+            punctuation as the sentence might change as a result of that module. 
         </p>
         <hr>
         <h3>
@@ -232,15 +240,15 @@ def index():
         </h3>
         <p>
             Now, as mentioned above, we need to figure out which words are named entities. We also need to figure out each
-            words part of speech. Lucky for us, this is nothing new and already implemented in various nlp libaries, so a 
-            quick grap and steal should be sufficient to get us going. English models are available at
+            word's part of speech. Lucky for us, this is nothing new and already implemented in various NLP libraries, so a 
+            quick grab and use should be sufficient to get us going. English models are available at
             <a href="https://huggingface.co/models?other=named-entity-recognition">Huggingface</a>, 
             <a href="https://www.nltk.org/">nltk</a>, and 
             <a href="https://spacy.io/usage/linguistic-features">Spacy</a>, so it's just a matter of preference.
         </p>
         <p>
-            Take your NER and POS tagger (can be two different like in my case), and run then in the beginning of your 
-            main function, so that we can use it for later. Check that the NER works as expected in the capitalization and 
+            Take your NER and POS tagger (can be two different like in my case), and run them at the beginning of your 
+            main function, so that we can use them later. Check that the NER works as expected in the capitalization and 
             compound words modules.
         </p>
         <hr>
@@ -248,9 +256,9 @@ def index():
             1.4 Now to the fun part: training models
         </h3>
         <p>
-            Or at least close to. Before training models, we need data. Remember to sources I mentioned earlier? Time to put
+            Or at least close to it. Before training models, we need data. Remember to sources I mentioned earlier? Time to put
             them to good use. The important thing here is finding not only enough but text of extremely high quality. Go 
-            through some of it yourself to make sure it's good.
+            through some of it yourself to make sure it's good i.e extremely low rate of grammatical mistakes.
         </p>
         <p>
             The dataset we create has to fit the model we choose. The first problem to tackle is punctuation.
@@ -261,34 +269,35 @@ def index():
             1.5 Choosing the right model
         </h3>
         <p>
-            The NLP space of deep learning models are booming, so we have plenty of models to take from. Or at least in 
-            english that is. In general, I see two ways of handling this problem (if something else comes to your mind, 
+            The NLP space of deep learning models is booming, so we have plenty of models to take from. Or at least in 
+            English that is. In general, I see two ways of handling this problem (if something else comes to your mind, 
             please reach out to me!)
         </p>
         <ul>
             <li>
                 <strong>Seq-2-seq: </strong>You give the model a sentence and the model returns with a sentence with punctuation. 
-                The dataset has to be sentence to sentence, and you need A LOT OF data of high quality.
+                The dataset has to be sentence to sentence, and you need A LOT OF data of high quality. Finding the punctuation
+                and returning the index of potential suggestions can be difficult.
             </li>
             <li>
                 <a href="https://huggingface.co/docs/transformers/bertology"><strong>BERT</strong></a>:
                 You give the model a sentence and it returns with a classification. You need less data, but
                 the inference might be slower, so a smaller model is needed for a reasonable compute time, but large enough to have 
-                a high enough accuracy. (BERT is the only available in danish, but you can use whatever. RoBERTa, destilBERT, 
-                Electra or a smaller GPT)
+                a decent accuracy. (BERT and distilBERT are the only ones available in Danish, but you can use RoBERTa, destilBERT, 
+                Electra, etc.)
             </li>
         </ul>
         <p>
-            With Sep-2-sep the results were unreliable and the training time too costly, so I decided to move on with a danish, 
-            <a href="https://huggingface.co/Maltehb/danish-bert-botxo">pre-trained BERT</a>.. The dataset then had to be fairly simple
-            to create. (As of Feb 2024, seq-2-seq might actually be the right solution as the growth in GPT's has been enourmous, 
-            so definitely check that out! Checkout 
-            <a href="https://huggingface.co/models?pipeline_tag=text-classification&sort=trending">Huggingface</a> for models)
+            With Sep-2-sep the results were unreliable and the training time too costly, so I decided to move on with a Danish, 
+            <a href="https://huggingface.co/Maltehb/danish-bert-botxo">pre-trained BERT</a>. The dataset then had to be fairly simple
+            to create. (As of Feb 2024, seq-2-seq might actually be the right solution as the growth in GPTs has been enormous, 
+            so definitely check
+            <a href="https://huggingface.co/models?pipeline_tag=text-classification&sort=trending">Huggingface</a> out!)
         </p>
         <p>
-            Before creating the dataset, let's decide on the scope. The scope are the size of the sentence that the is the input.
-            You give x words to the left, y words to the right. After the middle word is where you predict the punctuation.
-            In real time, there is only one way of knowing the right
+            Before creating the dataset, let's decide on the scope. The scope is the size of the sentence that is the input.
+            You give x words to the left, and y words to the right. After the middle word is where you predict the punctuation.
+            In real-time, there is only one way of knowing the right
             scope -> testing! And that's certainly not cheap. I did small experiments to see what happened. The smaller the scope,
             the faster the inference, the faster the training, but the lower the accuracy. So it's a fine line.
         </p>
@@ -344,9 +353,9 @@ def index():
             1.6 Training
         </h3>
         <p>
-            The dataset I used was about 46.000.000 elements long. The authers of BERT state that 
+            The dataset I used was about 46.000.000 elements long. The authors of BERT state that 
             <a href="https://mccormickml.com/2019/07/22/BERT-fine-tuning/">2-4 epochs of fine-tuning</a> is best.
-            I found that 2 epochs was enough, with only a small, non-significant (~0.1%) increase in accuracy when 
+            I found that 2 epochs were enough, with only a small, non-significant (~0.1%) increase in accuracy when 
             training for 3 epochs. This was not worth it compared to the cost, so I decided to stick with 2.
         </p>
         <img class="inline-img" src="fine_tune_models_results.png">
@@ -354,19 +363,20 @@ def index():
             The distilBERT was trained on <a href="https://cloud.jarvislabs.ai/">Jarvislabs</a> renting 6 A100s for ~10 hours 
             totaling ~120 dollars. The script used for training can be found at 
             <a href="https://github.com/Apros7/GrammatikTAK/tree/main/FineTuneModels/FineTuneBert">FineTuneModels/FineTuneBert</a>.
-            This was certainly not the cheapest or best way to do it (As of Feb. 15, there should be must cheaper ways to 
-            fine-tune such a model with a much smaller training size aswell), but it got the job done.
+            This was certainly not the cheapest or best way to do it (As of Feb 2024, there should be cheaper ways to 
+            fine-tune such a model with a much smaller training size as well, so give yourself some time to explore options available),
+             but it got the job done.
         </p>
         <hr>
         <h3>
             1.7 Implementing into a module
         </h3>
         <p>
-            Inference is a bit more different than training, but not too difficult to implement. The full module is
+            Inference is, of course, a bit different from training, but not too difficult to implement. The full module is
             implemented 
-            <a href="https://github.com/Apros7/GrammatikTAK/blob/main/GrammatiktakBackend/Utilities/model_utils.py">here</a>
-            . The most important thing is to argmax the outputs of the model as they are a from a softmax with 3 values, so
-            the one with the highest value, should be the prediction. You of cource has to create the dataset from your input sentence,
+            <a href="https://github.com/Apros7/GrammatikTAK/blob/main/GrammatiktakBackend/Utilities/model_utils.py">here</a>.
+            The most important thing is to argmax the outputs of the model as they are from a softmax with 3 values, so
+            the one with the highest value should be the prediction. You have to create the dataset from your input sentence,
             but besides that is shouldn't be too difficult: 
         </p>
         <pre>
@@ -382,7 +392,7 @@ def get_predictions(self, data : string):
         </pre>
         <p>
             1) Create your dataset from your input sentence, 2) tokenize, 3) format into tensor dataset (this can be
-            hard to get right, look at top of 
+            hard to get right, look at the top of 
             <a href="https://github.com/Apros7/GrammatikTAK/blob/main/GrammatiktakBackend/Utilities/model_utils.py">Utilities/model_utils.py</a> 
             to see how I implemented it), 4) run your model, and 5) max the predictions.
         </p>
@@ -395,9 +405,9 @@ def get_predictions(self, data : string):
             I will just quickly cover them.
         </p>
         <p>
-            <strong>Wrong tense</strong>: This approach was exactly the same as with punctuation. In danish, the main problem
-            with tense is some verbs in present tense have a silent "r" at the end. To tackle this, a new dataset was created
-            with the verb being unknown. So this time, the dataset will look something like this (with larger scope than shown here)
+            <strong>Wrong tense</strong>: This approach was exactly the same as with punctuation. In Danish, the main problem
+            with tense is verbs in present tense have a silent "r" at the end, which can be difficult to hear. To tackle this, a new dataset was created
+            with the verb being unknown. So this time, the dataset will look something like this (with a larger scope than shown here)
         </p>
         <table border="1" align="center">
             <tr>
@@ -405,84 +415,85 @@ def get_predictions(self, data : string):
                 <th>output</th>
             </tr>
             <tr>
-                <td>PAD PAD hello my name is</td>
-                <td>1</td>
+                <td>hello my name PAD lucas i</td>
+                <td>0</td>
             </tr>
             <tr>
-                <td>PAD hello my name is lucas</td>
+                <td>is lucas i PAD to train deep</td>
                 <td>0</td>
             </tr>
         </table>
         <p>
-            This did give some pretty good results:
+            Where the value refers to the form of the verb. This did give some pretty good results:
         </p>
         <img class="inline-img" src="fine_tune_nutidsr.png">
         <p>
             In this case, the amount of wrong predictions was ~1%, which was a bit too high for me. I then only used the
             prediction if the confidence level (not really confidence in these models, but somewhat an estimate) was above
-            95%. This decreased the amount of wrong predictions to ~0.4% while only decreasing the accuracy with 2 pp (whoop whoop!!).
+            95% (you get a 2x2 matrix with the first value can be thought of being 'probability' and the second 'confidence'). 
+            This decreased the amount of wrong predictions to ~0.4% while only decreasing the accuracy with 2 pp (whoop whoop!!).
         </p>
         <p>
-            <strong>Spellchecking</strong> is a big project on it's own a way too much to cover here. I might do another post on
-            that someday. I tried many different approaches: simple spellcheckers, n-grams, word-embeddings, and gpts. I ended up
-            using a mix of <a href="https://norvig.com/spell-correct.html">a simple spellchecker formula</a> by Peter Norvig (
-            this is btw an amazing read and I would highly recommend) and the specific issues around danish spelling allowing 
+            <strong>Spellchecking</strong> is a big project on its own and way too much to cover here. I might do another post on
+            that someday. I tried many different approaches: simple spellcheckers, n-grams, word embeddings, and gpts. I ended up
+            using a mix of <a href="https://norvig.com/spell-correct.html">a simple spellchecker formula</a> by Peter Norvig
+            (this is btw an amazing read and I would highly recommend it) and the specific issues around Danish spelling allowing 
             me to give good educated guesses on where the issues in the spelling might be.
         </p>
         <p>
             <strong>Lack of subject</strong> is more of a modern problem, but I thought this would be fun to investigate. When
             writing more formal text, such lack of subject should definitely not be present. I didn't really find a satisfying 
             solution to this problem. The main functionality at the moment is checking if the structure of the sentence matches
-            some hard coded, frequent structures. If so, it's pretty easy to determine if the subject is missing and suggest one.
+            some hard-coded, frequent structures. If so, it's pretty easy to determine if the subject is missing and suggest one.
         </p>
         <p>
-            <strong>Articles</strong> can be difficult in danish just as in any other language, the most prominent issue 
+            <strong>Articles</strong> can be difficult in Danish just as in any other language, the most prominent issue 
             being the difference in when to use a noun as common gender or neuter gender (most languages use masculine and feminine
             but it's essentially the same point). Thankfully, the POS tagger described earlier takes care of this when analyzing
-            part-of-speech, so it's as simple as find the information in the POS object and checking that it matches the current sentence.
+            part-of-speech, so it's as simple as finding the information in the POS object and checking that it matches the current sentence.
         </p>
         <hr>
         <h3>
             2. The frontend
         </h3>
             Phew, that was tough. Now we need some place for the users to actually try the modules out and to get some data.
-            This could be a website or some add in somewhere. This has to be deployed somewhere together with the backend. 
+            This could be a website or some add-in somewhere. This has to be deployed somewhere together with the backend. 
         <h3>
             2.1 A simple webpage
         </h3>
         <p>
-            There's many different ways of doing this. React or Angular is a way, but I decided to do it in plain html, css 
+            There are many different ways of doing this. React or Angular is a way, but I decided to do it in plain html, css 
             & js. It's definitely not the best, but it will do as a simple website for users to test on 
-            (the website is originally in danish, and google did the translations, so they might not be perfect):
+            (the website is originally in Danish, and Google did the translations, so they might not be perfect):
         </p>
         <img src="grammatiktak_website.png" class="inline-img"></img>
         <img src="grammatiktak_website2.png" class="inline-img"></img>
         <p>
-            I bought a domain, hooked it up with my github repo and launched to site with github pages. That is the 
-            benefit of developing in static sites. If I were to use some frameworks, 
+            I bought a domain, hooked it up with my Github repo, and launched to site with Github pages. That is the 
+            benefit of developing static sites. If I were to use some frameworks, 
             <a href="https://vercel.com/">vercel</a> may be a way to host it.
         </p>
         <p>
-            One thing I focused on was continous corrections and splitting the text into smaller chunks when correcting.
-            Initially, the feedback was that the service was too slow. This was mainly to the BERT in punctuation, so 
-            difficult to optimize. I instead decided to split the input into smaller chunks, so the corrections slowly would
-            come to the user. This seemed to improve the user experience. By continously checking if the text changed, this also
-            allowed the user to change the text and then slowly get feedback within the text editor on the webpage.
+            One thing I focused on was continuous corrections and splitting the text into smaller chunks when correcting.
+            Initially, the feedback was that the service was too slow. This was mainly due to the BERT in punctuation, so 
+            difficult to optimize. I instead decided to split the input into smaller chunks, so the corrections would
+            come to the user over time. This seemed to improve the user experience. By continuously checking if the text changed, this also
+            allowed the user to change the text and then get feedback in real-time within the text editor in on the webpage.
         </p>
         <hr>
         <h3>
             2.2 Putting it all together
         </h3>
         <p>
-            So we need somewhere to host this. The frontend is hosted at github pages for free. There are a few options for
-            backend. The problem is that it cannot be a function app / lambda function / cloud functions depending on if you
-            use Azure, AWS or GCP, as the models and large dictionaries has to be loaded in for the modules to work. This takes 
+            So we need somewhere to host this. The front end is hosted at Github pages for free. There are a few options for
+            the backend. The problem is that it cannot be a function app / lambda function / cloud function depending on if you
+            use Azure, AWS, or GCP, as the models and large dictionaries have to be loaded in for the modules to work. This takes 
             ~15 seconds, so there is no way this would happen for each request.
         </p>
         <p>
             Renting a VM is what I did. It all fell on Google as they had the lowest prices (~$200 pr. month). I bet you there
-            must be a better solution to this, so there is definitely space for improvement here. Setting up a simple flask app
-            on a google VM is relatively easy, but you might be looking for some gcp cli commands to upload new code and put into
+            must be a better solution to this, so there is definitely space for improvement here. Setting up a simple Flask app
+            on a Google VM is relatively easy, but you might be looking for some gcp cli commands to upload new code and put in
             production, so keep these in mind:
         </p>
         <pre>
@@ -493,7 +504,7 @@ def get_predictions(self, data : string):
         </pre>
         <p>
             Where your _bucket_or_vm_name_ should look something like: 'gcr.io/grammatiktakbackend/index'. Remember to enable
-            cors in the python script with `CORS(app)` to allow for the frontend to send request. For security reasons, you 
+            cors in the Python script with `CORS(app)` to allow for the front end to send requests. For security reasons, you 
             may want to only whitelist your frontend for requests. When using CGP, this can be done on their platform
         </p>
         <hr>
@@ -501,12 +512,12 @@ def get_predictions(self, data : string):
             2.3 What about drift and accuracy in production?
         </h3>
         <p>
-            You may have noticed that on the bottom of the website, there exists an option to give feedback. We also have the
+            You may have noticed that at the bottom of the website, there exists an option to give feedback. We also have the
             issue of drift in production together with the fact that we don't really know how well the modules work. First, a
             <a href="https://github.com/Apros7/GrammatikTAK/blob/main/GrammatiktakBackend/Utilities/module_utils.py">ModuleTracker</a> 
-            is made to track each module (time & corrections) on request and upload to storage just before sending the result 
-            back to the frontend. For storage I used Google Firestore, expensive compared to the storage used, but a flexible 
-            and scalable NoSQL database. 
+            is made to track each module (time & corrections) on requests and upload to storage just before sending the result 
+            back to the front end. For storage I used Google Firestore. It's expensive compared to the storage used, but a flexible,
+            scalable NoSQL database. 
         </p>
         <p>
             For the feedback, to ensure high security, the information is sent to the backend and then to the storage. This is 
@@ -515,31 +526,31 @@ def get_predictions(self, data : string):
         </p>
         <p>
             One last thing that one could do is to send information about which corrections were accepted or denied when the 
-            last correction is handled. With all that handled, we can now easily pull data to measure which modules are performing
+            last correction is handled. With all that out of the way, we can now easily pull data to measure which modules are performing
             well both in terms of offering value and doing so in an acceptable amount of time. Now it's just about analyzing,
-            improving, removing or adding modules, and improving the service.
+            then improving, removing or adding modules, and thereby improving the service.
         </p>
         <hr>
         <h3>
             3.1 Word add-in
         </h3>
         <p>
-            In addition to the website, I wanted an integrated way of using the service, so I decided to built a 
+            In addition to the website, I wanted an integrated way of using the service, so I decided to build a 
             <a href="https://github.com/Apros7/GrammatiktakDesktop">Word add-in</a>,
-            just like Grammarly works in Word. The API of Google Docs is insanely slow, so there is no way to implement in Google
+            just like Grammarly works in Word. The API of Google Docs is insanely slow, so there is no way to implement it in Google
             Docs, which I initially tried. The word add-in works locally, but I didn't make the effort of making it publicly available.
-            If I had to try again, I think I would built a desktop application that can work in multiple apps. This would offer more
-            flexiblility when working with Word. The add-in framework seems a bit old and outdated.
+            If I had to try again, I think I would build a desktop application that can work with multiple apps. This would offer more
+            flexibility when working with Word, as the add-in framework seems a bit old and outdated.
         </p>
         <hr>
         <h3>
-            3.2 High quality dataset
+            3.2 High-quality dataset
         </h3>
         <p>
-            There does not exist many high-quality danish datasets, so I spend some time reviewing text myself to use for testing 
+            There do not exist many high-quality Danish datasets, so I spend some time reviewing text myself to use for testing 
             my modules. The training datasets can be created by running files in
             <a href="https://github.com/Apros7/GrammatikTAK/tree/main/DataProcessing">/DataProcessing</a>.
-            The datasets used by the modules for correcting can be found at
+            The datasets and dictionaries used by the modules for correcting can be found at
             <a href="https://github.com/Apros7/GrammatikTAK/tree/main/GrammatiktakBackend/Datasets">/GrammatiktakBackend/Datasets</a>.
             The testing datasets can be found in the
             <a href="https://github.com/Apros7/GrammatiktakDatasets">GrammatiktakDatasets repo</a>.
@@ -549,22 +560,26 @@ def get_predictions(self, data : string):
             4. Final thoughts
         </h3>
         <p>
-            <strong>Credits: </strong> Many people are a reason this project came to be. They freely put their knowledge,
-            models and data in a easy to manage and understand format for everyone to use. They deserve a big thank you!
+            <strong>Credits: </strong> Many people are the reason this project came to be. They freely put their knowledge,
+            models, and data in a easy-to-manage and understand format for everyone to use. They deserve a big thank you!
             They did not in any way participate in this project and cannot be held accountable for anything related to this project.
         </p>
         <ul>
             <li>
                 <strong>Leon Derczynski & Manuel R. Ciosici, ITU, Copenhagen: </strong>
-                For sharing such an amazing, large collection of danish text for NLP development.
+                For sharing such an amazing, large collection of Danish text for NLP development with 
+                <a href="https://gigaword.dk/">Gigaword.dk</a>.
             </li>
             <li>
                 <strong>Anita Ågerup Jervelund, dsn.dk: </strong>
-                For sharing her knowledge on spelling and grammar mistakes in danish primary/high schools.
+                For sharing her knowledge on spelling and grammar mistakes in danish primary/high schools in this amazing
+                <a href="https://dsn.dk/wp-content/uploads/2021/01/Saadan.staver.vi_.pdf">report</a>
             </li>
             <li>
                 <strong>certainly.io, Certainly, Malte Højmark-Bertelsen: </strong>
-                For developing and training a widely available danish BERT for the danish NLP community.
+                For developing and training 
+                <a href="https://huggingface.co/Maltehb/danish-bert-botxo">a widely available Danish BERT</a>
+                for the Danish NLP community.
             </li>
         </ul>
         <hr>
