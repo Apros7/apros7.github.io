@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lucas Vilsen</title>
-  <link rel="stylesheet" href="../blog_post.css">
+  <link rel="stylesheet" href="../../blog_post.css">
   <link rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/styles/default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
@@ -17,7 +17,7 @@
 </head>
 <body>
     <div class="blog">
-        <a href="../index.html" class="back-button">&larr; Back</a>
+        <a href="../../index.html" class="back-button">&larr; Back</a>
         <p class="date">Original: Feb. 15 - 2024</p>
         <p class="date">Last edited: Feb. 17 - 2024</p>
         <hr>
@@ -30,10 +30,10 @@
         <hr>
         <div class="links">
             <p style="margin-bottom: 10px;">Backend | Frontend | Word add-in | Datasets</p>
-            <a href="https://github.com/Apros7/GrammatikTAK"><img src="../github_logo.png" alt="GitHub" width="20" height="20"></a>
-            <a href="https://github.com/Apros7/GrammatiktakWebsite"><img src="../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 75px;"></a>
-            <a href="https://github.com/Apros7/GrammatiktakDesktop"><img src="../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 85px;"></a>
-            <a href="https://github.com/Apros7/GrammatiktakDatasets"><img src="../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 80px;"></a>
+            <a href="https://github.com/Apros7/GrammatikTAK"><img src="../../github_logo.png" alt="GitHub" width="20" height="20"></a>
+            <a href="https://github.com/Apros7/GrammatiktakWebsite"><img src="../../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 75px;"></a>
+            <a href="https://github.com/Apros7/GrammatiktakDesktop"><img src="../../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 85px;"></a>
+            <a href="https://github.com/Apros7/GrammatiktakDatasets"><img src="../../github_logo.png" alt="GitHub" width="20" height="20" style="margin-left: 80px;"></a>
         </div>
         <hr>
         <p>
@@ -446,15 +446,22 @@ def get_predictions(self, data : string):
         <h3>
             2. The frontend
         </h3>
-        <p>
-            Phew, that was tough.
-        </p>
-        <hr>
+            Phew, that was tough. Now we need some place for the users to actually try the modules out and to get some data.
+            This could be a website or some add in somewhere. This has to be deployed somewhere together with the backend. 
         <h3>
             2.1 A simple webpage
         </h3>
         <p>
-
+            There's many different ways of doing this. React or Angular is a way, but I decided to do it in plain html, css 
+            & js. It's definitely not the best, but it will do as a simple website for users to test on 
+            (the website is originally in danish, and google did the translations, so they might not be perfect):
+        </p>
+        <img src="grammatiktak_website.png" class="inline-img"></img>
+        <img src="grammatiktak_website2.png" class="inline-img"></img>
+        <p>
+            I bought a simple domain, hooked it up with my github repo and launched to site with github pages. That is the 
+            benefit of developing in static sites. If I were to use some frameworks, 
+            <a href="https://vercel.com/">vercel</a> may be a way to host it.
         </p>
         <hr>
         <h3>
@@ -465,10 +472,11 @@ def get_predictions(self, data : string):
         </p>
         <hr>
         <h3>
-            2.3 What about drift and true accuracy?
+            2.3 What about drift and accuracy in production?
         </h3>
         <p>
-
+            You may have noticed that on the bottom of the website, there exists an option to give feedback. We also have the
+            issue of drift in production together with the fact that we don't really know how well the modules work. 
         </p>
         <hr>
         <h3>
