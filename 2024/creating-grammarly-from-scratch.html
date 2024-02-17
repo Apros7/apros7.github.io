@@ -394,23 +394,60 @@ def get_predictions(self, data : string):
         <p>
             So a few modules are still missing. To cut down on the size of this post (yeah, maybe that's too late &#128517;?!)
             I will just quickly cover them.
-
-Spelling
-Wrong tense
-Lack of subject
-Articles
         </p>
         <p>
             <strong>Wrong tense</strong>: This approach was exactly the same as with punctuation. In danish, the main problem
             with tense is some verbs in present tense have a silent "r" at the end. To tackle this, a new dataset was created
-            with the verb being 
+            with the verb being unknown. So this time, the dataset will look something like this (with larger scope than shown here)
+        </p>
+        <table border="1" align="center">
+            <tr>
+                <th>input</th>
+                <th>output</th>
+            </tr>
+            <tr>
+                <td>PAD PAD hello my name is</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>PAD hello my name is lucas</td>
+                <td>0</td>
+            </tr>
+        </table>
+        <p>
+            This did give some pretty good results:
+        </p>
+        <img class="inline-img" src="fine_tune_nutidsr.png">
+        <p>
+            In this case, the amount of wrong predictions was ~1%, which was a bit too high for me. I then only used the
+            prediction if the confidence level (not really confidence in these models, but somewhat an estimate) was above
+            95%. This decreased the amount of wrong predictions to ~0.4% while only decreasing the accuracy with 2 pp (whoop whoop!!).
+        </p>
+        <p>
+            <strong>Spellchecking</strong> is a big project on it's own a way too much to cover here. I might do another post on
+            that someday. I tried many different approaches: simple spellcheckers, n-grams, word-embeddings, and gpts. I ended up
+            using a mix of <a href="https://norvig.com/spell-correct.html">a simple spellchecker formula</a> by Peter Norvig (
+            this is btw an amazing read and I would highly recommend) and the specific issues around danish spelling allowing 
+            me to give good educated guesses on where the issues in the spelling might be.
+        </p>
+        <p>
+            <strong>Lack of subject</strong> is more of a modern problem, but I thought this would be fun to investigate. When
+            writing more formal text, such lack of subject should definitely not be present. I didn't really find a satisfying 
+            solution to this problem. The main functionality at the moment is checking if the structure of the sentence matches
+            some hard coded, frequent structures. If so, it's pretty easy to determine if the subject is missing and suggest one.
+        </p>
+        <p>
+            <strong>Articles</strong> can be difficult in danish just as in any other language, the most prominent issue 
+            being the difference in when to use a noun as common gender or neuter gender (most languages use masculine and feminine
+            but it's essentially the same point). Thankfully, the POS tagger described earlier takes care of this when analyzing
+            part-of-speech, so it's as simple as find the information in the POS object and checking that it matches the current sentence.
         </p>
         <hr>
         <h3>
             2. The frontend
         </h3>
         <p>
-
+            Phew, that was tough.
         </p>
         <hr>
         <h3>
