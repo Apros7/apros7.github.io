@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lucas Vilsen</title>
   <link rel="stylesheet" href="../../blog_post.css">
-  <link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/styles/default.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -459,16 +458,43 @@ def get_predictions(self, data : string):
         <img src="grammatiktak_website.png" class="inline-img"></img>
         <img src="grammatiktak_website2.png" class="inline-img"></img>
         <p>
-            I bought a simple domain, hooked it up with my github repo and launched to site with github pages. That is the 
+            I bought a domain, hooked it up with my github repo and launched to site with github pages. That is the 
             benefit of developing in static sites. If I were to use some frameworks, 
             <a href="https://vercel.com/">vercel</a> may be a way to host it.
+        </p>
+        <p>
+            One thing I focused on was continous corrections and splitting the text into smaller chunks when correcting.
+            Initially, the feedback was that the service was too slow. This was mainly to the BERT in punctuation, so 
+            difficult to optimize. I instead decided to split the input into smaller chunks, so the corrections slowly would
+            come to the user. This seemed to improve the user experience. By continously checking if the text changed, this also
+            allowed the user to change the text and then slowly get feedback within the text editor on the webpage.
         </p>
         <hr>
         <h3>
             2.2 Putting it all together
         </h3>
         <p>
-
+            So we need somewhere to host this. The frontend is hosted at github pages for free. There are a few options for
+            backend. The problem is that it cannot be a function app / lambda function / cloud functions depending on if you
+            use Azure, AWS or GCP, as the models and large dictionaries has to be loaded in for the modules to work. This takes 
+            ~15 seconds, so there is no way this would happen for each request.
+        </p>
+        <p>
+            Renting a VM is what I did. It all fell on Google as they had the lowest prices (~$200 pr. month). I bet you there
+            must be a better solution to this, so there is definitely space for improvement here. Setting up a simple flask app
+            on a google VM is relatively easy, but you might be looking for some gcp cli commands to upload new code and put into
+            production, so keep these in mind:
+        </p>
+        <pre>
+            <code class="bash">
+        gcloud builds submit --tag _bucket_or_vm_name_
+        gcloud run deploy --image _bucket_or_vm_name_ --platform managed
+            </code>
+        </pre>
+        <p>
+            Where your _bucket_or_vm_name_ should look something like: 'gcr.io/grammatiktakbackend/index'. Remember to enable
+            cors in the python script with `CORS(app)` to allow for the frontend to send request. For security reasons, you 
+            may want to only whitelist your frontend for requests. When using CGP, this can be done on their platform
         </p>
         <hr>
         <h3>
@@ -476,7 +502,22 @@ def get_predictions(self, data : string):
         </h3>
         <p>
             You may have noticed that on the bottom of the website, there exists an option to give feedback. We also have the
-            issue of drift in production together with the fact that we don't really know how well the modules work. 
+            issue of drift in production together with the fact that we don't really know how well the modules work. First, a
+            <a href="https://github.com/Apros7/GrammatikTAK/blob/main/GrammatiktakBackend/Utilities/module_utils.py">ModuleTracker</a> 
+            is made to track each module (time & corrections) on request and upload to storage just before sending the result 
+            back to the frontend. For storage I used Google Firestore, expensive compared to the storage used, but a flexible 
+            and scalable NoSQL database. 
+        </p>
+        <p>
+            For the feedback, to ensure high security, the information is sent to the backend and then to the storage. This is 
+            fast to implement as the connection to the storage is already active, and does not increase the cost of the VM, 
+            but also a place where optimization should be applied.
+        </p>
+        <p>
+            One last thing that one could do, is to send information when the last correction is either accepted or 
+        </p>
+        <p>
+            With all that applied, we can now pull information
         </p>
         <hr>
         <h3>
@@ -521,9 +562,8 @@ def get_predictions(self, data : string):
         </ul>
         <hr>
         <p>
-            I'm not sure anyone will get this far in my post. If you did, I truly hope you gained insights reading this
-            for you to use in your future projects. Should you have any questions, then please reach out to me. Best of luck
-            in the future!
+            I'm not sure anyone will get this far in my post. If you did, I truly hope you found it valuable! 
+            Should you have any questions, then please reach out to me. Best of luck in the future!
         </p>
     </div>
 </body>
