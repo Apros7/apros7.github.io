@@ -514,33 +514,40 @@ def get_predictions(self, data : string):
             but also a place where optimization should be applied.
         </p>
         <p>
-            One last thing that one could do, is to send information when the last correction is either accepted or 
-        </p>
-        <p>
-            With all that applied, we can now pull information
-        </p>
-        <hr>
-        <h3>
-            3. Other
-        </h3>
-        <p>
-
+            One last thing that one could do is to send information about which corrections were accepted or denied when the 
+            last correction is handled. With all that handled, we can now easily pull data to measure which modules are performing
+            well both in terms of offering value and doing so in an acceptable amount of time. Now it's just about analyzing,
+            improving, removing or adding modules, and improving the service.
         </p>
         <hr>
         <h3>
-            3.1 High quality dataset
+            3.1 Word add-in
         </h3>
         <p>
-
+            In addition to the website, I wanted an integrated way of using the service, so I decided to built a 
+            <a href="https://github.com/Apros7/GrammatiktakDesktop">Word add-in</a>,
+            just like Grammarly works in Word. The API of Google Docs is insanely slow, so there is no way to implement in Google
+            Docs, which I initially tried. The word add-in works locally, but I didn't make the effort of making it publicly available.
+            If I had to try again, I think I would built a desktop application that can work in multiple apps. This would offer more
+            flexiblility when working with Word. The add-in framework seems a bit old and outdated.
         </p>
         <hr>
         <h3>
-            3.2 Word add-in
+            3.2 High quality dataset
         </h3>
         <p>
-
+            There does not exist many high-quality danish datasets, so I spend some time reviewing text myself to use for testing 
+            my modules. The training datasets can be created by running files in
+            <a href="https://github.com/Apros7/GrammatikTAK/tree/main/DataProcessing">/DataProcessing</a>.
+            The datasets used by the modules for correcting can be found at
+            <a href="https://github.com/Apros7/GrammatikTAK/tree/main/GrammatiktakBackend/Datasets">/GrammatiktakBackend/Datasets</a>.
+            The testing datasets can be found in the
+            <a href="https://github.com/Apros7/GrammatiktakDatasets">GrammatiktakDatasets repo</a>.
         </p>
         <hr>
+        <h3>
+            4. Final thoughts
+        </h3>
         <p>
             <strong>Credits: </strong> Many people are a reason this project came to be. They freely put their knowledge,
             models and data in a easy to manage and understand format for everyone to use. They deserve a big thank you!
