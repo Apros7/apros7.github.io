@@ -1,0 +1,12 @@
+.landing {
+    font-size: 5em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    line-height: normal;
+    margin: 0;
+    padding: 0;
+}
