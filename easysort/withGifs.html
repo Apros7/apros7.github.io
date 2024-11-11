@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySort Impact Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+            background-color: #000;
+        }
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            height: 100vh;
+            width: 100vw;
+        }
+        .video-container {
+            position: relative;
+            overflow: hidden;
+        }
+        video, img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(50%);
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-align: center;
+        }
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 40px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        .stat {
+            font-size: 2.5rem;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        .counter {
+            font-weight: bold;
+            color: #fff;
+            margin-right: 15px;
+            transition: all 0.5s ease-in-out;
+        }
+        .unit {
+            font-size: 1.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-grid">
+        <div class="video-container">
+            <video src="https://media.giphy.com/media/3o7TKSjRrfIPjeiVyM/giphy.mp4" autoplay loop muted></video>
+        </div>
+        <div class="video-container">
+            <img src="https://media.giphy.com/media/3o7aCWJavAgtBzLWrS/giphy.gif" alt="Recycling">
+        </div>
+        <div class="video-container">
+            <video src="https://media.giphy.com/media/l1KVcrdl7rJpFnY2s/giphy.mp4" autoplay loop muted></video>
+        </div>
+        <div class="video-container">
+            <img src="https://media.giphy.com/media/l0HlGeTBdTqMll9bq/giphy.gif" alt="Trash sorting">
+        </div>
+        <div class="video-container">
+            <video src="https://media.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.mp4" autoplay loop muted></video>
+        </div>
+        <div class="video-container">
+            <img src="https://media.giphy.com/media/l0HlGmv4WqldO9c5y/giphy.gif" alt="Recycling plant">
+        </div>
+        <div class="video-container">
+            <video src="https://media.giphy.com/media/l0HlvU6gXnZHwnB3a/giphy.mp4" autoplay loop muted></video>
+        </div>
+        <div class="video-container">
+            <img src="https://media.giphy.com/media/l0HlMWVJqGF9jUU7K/giphy.gif" alt="Trash sorting">
+        </div>
+        <div class="video-container">
+            <video src="https://media.giphy.com/media/3o7TKMeCOV3oXSb5bq/giphy.mp4" autoplay loop muted></video>
+        </div>
+    </div>
+    <div class="overlay">
+        <h1>EasySort</h1>
+        <div class="stat" id="trashCounter">
+            <span class="counter">127.00</span>
+            <span class="unit">kg trash sorted</span>
+        </div>
+        <div class="stat" id="co2Counter">
+            <span class="counter">88.90</span>
+            <span class="unit">kg CO2 saved</span>
+        </div>
+    </div>
+
+    <script>
+        const trashCounter = document.querySelector('#trashCounter .counter');
+        const co2Counter = document.querySelector('#co2Counter .counter');
+
+        let trashSorted = 127.00;
+        let co2Saved = 88.90;
+
+        function easeOutQuad(t) {
+            return t * (2 - t);
+        }
+
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const easedProgress = easeOutQuad(progress);
+                const value = start + (end - start) * easedProgress;
+                element.textContent = value.toFixed(2);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function updateCounters() {
+            const trashIncrement = Math.random() * 0.2 + 0.1;
+            const newTrashSorted = trashSorted + trashIncrement;
+            const newCo2Saved = co2Saved + trashIncrement * 0.7;
+
+            animateValue(trashCounter, trashSorted, newTrashSorted, 1500);
+            animateValue(co2Counter, co2Saved, newCo2Saved, 1500);
+
+            trashSorted = newTrashSorted;
+            co2Saved = newCo2Saved;
+
+            const nextUpdateTime = Math.random() * 3000 + 1500;
+            setTimeout(updateCounters, nextUpdateTime);
+        }
+
+        updateCounters();
+    </script>
+</body>
+</html>
