@@ -1,7 +1,7 @@
 body {
     font-family: "Space Mono", sans-serif;
     padding: 0;
-    margin: 5em 25em;
+    margin: 5em 20em;
 }
 
 p, h1, h3 {
@@ -23,4 +23,5 @@ h3 {
 
 p, li {
     font-size: 15px;
+    margin-bottom: 1px;
 }
