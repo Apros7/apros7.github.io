@@ -92,29 +92,220 @@
             </p>
             <hr>
             <h3>2.1 Theory and some math</h3>
-            <p><b>Torus Graphs</b></p>
+            <hr>
+            <h3>Torus Graphs</h3>
             <p>
-                Picture goes here...
+                A torus graph (TG) is a method for analyzing circular data. Moreover, a torus graph is
+                a graphical model that can be used for multivariate phase coupling analysis of oscillating
+                signals, particularly in the context of neuroscience. A torus graph is a product of
+                circles, which implies that a d-dimensional vector of circular measurements lies on a ddimensional
+                torus. It could look like:
             </p>
-            <p><b>Mixture Model</b></p>
+            <img src="torus-example.png" class="inline-img"></img>
             <p>
-                Picture goes here...
+                Initially, the torus graph was
+                developed to identify coordination amongst signals from different brain areas, since it captures
+                conditional associations. However, a single torus graph merely captures a frozen
+                time shot of the signals. Hence expanding the torus graph to a mixture of torus graphs
+                would theoretically simulate the conditional associations over time.
+                The density for the torus graph can be mathematically modelled as seen below, and was
+                developed in 2020 by Natalie Klein et al.
             </p>
-            <p><b>Parameter Estimation</b></p>
+            <img src="torus-dens-formula.png" class="inline-img"></img>
             <p>
-                Picture goes here...
+                Where x represents a vector of phase angle values extracted from oscillatory signals for
+                a single time point from each of the d signals. 
             </p>
-            <p><b>Score Matching</b></p>
             <p>
-                Picture goes here...
+                This expression does not include a normalization
+                constant as many other distributions do. This implies, amongst others, that
+                the distribution will not integrate to 1. However, this is an applicable assumption since
+                the model does not estimate an actual distribution, hence one cannot apply the same
+                assumptions as one can with other distributions. Furthermore, the shape of the distribution
+                has proven to be approximately accurate, which justifies the lack of a normalization
+                constant. 
             </p>
-            <p><b>Noise Contrastive Estimation</b></p>
             <p>
-                Picture goes here...
+                Generally, the model represents the product that lies on the torus graph. The
+                density can, much like a multivariate normal distribution, be assumed to be part of the
+                exponential family. The first sum represents the phases themselves as well as their coefficients,
+                whereas the second sum represents the phase differences and phase reflections.
+                However, assuming that the phases are uniformly distributed, one can also shy from the
+                phase reflections. 
             </p>
-            <p><b>Evaluation: NMI and Phi</b></p>
             <p>
-                Picture goes here...
+                The von Mises distribution is commonly used to model circular random
+                variables, and this distribution is uni-modal and symmetric around its mean. This implies
+                that as the parameter κ increases, the relative phase ϕ becomes increasingly concentrated
+                around its mean. As κ goes towards 0, it reduces to a uniform distribution, thus
+                representing the case where the phases of two signals are mutually independent. This
+                results in the expression, made by Klein et al. 2020:
+            </p>
+            <img src="torus-dens-formula-smal.png" class="inline-img"></img>
+            <p>
+                This expression then models the density of the torus graph for a single time point for each
+                signal. However, there is one main issue at hand. Multiple time points are needed to
+                capture the full conditions over time. Hence the expansion to mixture models.
+            </p>
+            <hr>
+            <h3>Mixture Model</h3>
+            <p>
+                Suppose there
+                are N samples 'x1, ..., xN' from a finite mixture distribution, namely the torus graph model.
+                Then this can be modelled for K models as follows:
+            </p>
+            <img src="mixture-1.png" class="inline-img"></img>
+            <p>
+                where
+            </p>
+            <div style="text-align:center;">
+                <img src="mixture-2.png" class="inline-img" style="width:30%;"></img>
+            </div>
+            <p>
+                and
+            </p>
+            <img src="mixture-3.png" class="inline-img"></img>
+            <p>
+                Here, the unknown parameters are 'ϕ = (ϕ1, ..., ϕK )' the model parameter for torus graphs
+                and 'π = (π0, ..., πK )' which are the weights. This represents a combination of torus graphs,
+                implying that multiple time points are included. This approximately models the circular
+                data and their conditional associations over time. 
+            </p>
+            <p>
+                Klein et al. 2020Furthermore, the normalization constant
+                Z(ϕ_j) for each component p_j (x, ϕ) is intractable. But as mentioned earlier, this can
+                be excluded mathematically since the shape of the distribution is not affected, though it
+                will be included computationally. However, there is still a problem at hand, namely parameter
+                estimation. 
+            </p>
+            <p>
+                <a href="https://proceedings.mlr.press/v89/matsuda19a/matsuda19a.pdf">Matsuda 2019</a> 
+                first introduced parameter estimation of non-normalized
+                models. A method for estimating both the parameters ϕ for the torus graphs and mixture
+                model is needed. For the mixture model Noise Contrastive Estimation (NCE) will be
+                used, whereas both NCE and Score Matching (SM) will be used for singular torus graphs.
+            </p>
+            <hr>
+            <h3>Parameter Estimation</h3>
+            <p>
+                As mentioned the torus graph has a model parameter for the phase difference given by
+                ϕ to compute the density. Usually a maximum likelihood approach would be applied
+                to estimate the normalization constant. However this is not computationally feasible for
+                dimensions higher than d > 2 as the probability density function relies on a multiplicative
+                constant Z, which is intractable. Score matching offers a method independent of Z, 
+                whereas NCE sets up a binary classification problem, making the parameter estimation
+                possible.
+            </p>
+            <hr>
+            <h3>Score Matching</h3>
+            <p>
+                Established by <a href="https://www.jmlr.org/papers/volume6/hyvarinen05a/hyvarinen05a.pdf">Hyvärinen et al. 2005</a>
+                , score matching (SM) uses the gradient of the
+                log-density with respect to the data score vector to avoid the use of the normalization
+                constant, Z. The general idea behind score matching is to estimate model parameters by
+                minimizing the expected squared distance between the model and the data score function,
+                using an estimate of the data score function. 
+            </p>
+            <p>
+                Score functions are gradients of the
+                log-density functions. Score matching requires density to be supported by Rd, which fortunately
+                applies for circular densities as proved by Klein et al. 2020. It also requires for
+                the domain to be differentiable, and as torus graphs are circular objects with log-densities
+                comprised of cosine and sine functions, they are exactly infinitely differentiable within the
+                bounds [-1, 1]. The score matching objective function is defined as such:
+            </p>
+            <img src="score-matching-1.png" class="inline-img"></img>
+            <p>
+                Here p(x) denotes the model score function and q(x, ϕ) denotes the data score function.
+                The objective function is a measure of expected squared difference between the model
+                and data score function. As shown by Klein 2020, the score matching objective function
+                for torus graph models, under some mild regularity assumptions, can be expressed as:
+            </p>
+            <img src="score-matching-2.png" class="inline-img"></img>
+            <p>
+                This equation is derived by expanding equation 2.6 in the domain [0, 2π], and applying
+                integration by parts solely to the term that uses both the model and data score function
+            </p>
+            <p>
+                You should now have a general understanding of Score Matching. To get a more in depth explanation, visit the Klein et al. Paper
+                and the underlying reference to Score Matching.
+            </p>
+            <hr>
+            <h3>Noise Contrastive Estimation</h3>
+            <p>
+                Noise contrastive estimation (NCE) is another method for parameter estimation, where
+                NCE sets up a binary classification problem. It estimates non-normalized models by discriminating 
+                between observed data and artificially generated noise samples. The model
+                is trained to discern between this, making the learning procedure more efficient.
+                Suppose there are N samples 'x1, ..., xN' from a parametric distribution
+            </p>
+            <img src="nce-1.png" class="inline-img"></img>
+            <p>
+                Here ϕ is an unknown parameter and Z(ϕ) is the normalization constant, which is intractable.
+                The function
+                p(x|ϕ) is the non-normalized density, namely the torus graph,
+                which contains the part that will be estimated. The non-normalized model in NCE is defined
+                as:
+            </p>
+            <img src="nce-2.png" class="inline-img"></img>
+            <p>
+                Where c is an unknown parameter estimated from the data, and is defined as c =-logZ(ϕ).
+            </p>
+            <p>
+                To estimate the non-normalized mixture model, an extension is made of NCE. Equation
+                2.4 is reparametrized, where the parameter ck incorporates both the mixture weight πk
+                and the normalization constant Z(ϕk):
+            </p>
+            <img src="nce-3.png" class="inline-img"></img>
+            <p>
+                Where c = (c1, ..., cK ) with 'c_k = log(π_k) - logZ(ϕk)' and each 'p_k(x|ϕ_k, c_k)' is defined as:
+            </p>
+            <img src="nce-4.png" class="inline-img"></img>
+            <p>
+                The reparametrization reduces to the first equation presented in this NCE part (the original NCE formula) when K = 1.
+            </p>
+            <p>
+                In addition to the observed data, there are generated some noise, n(y). The noise distribution
+                should be chosen carefully, so that it is sufficiently close to the real data. The noise
+                is difficult to discriminates from the data, but in the second presented formula the estimate of (θ, c) discriminate
+                between them as accurately as possible, which maximizes the objective function:
+            </p>
+            <img src="nce-5.png" class="inline-img"></img>
+            <p>
+                Where both c and ϕ are free parameters. The objective function,
+                JNCE is the log-likelihood of the logistic regression classifier, which can be optimized through an iterative loss approach 
+                in any gradient based package like Pytorch.
+            </p>
+            <hr>
+            <h3>Evaluation: NMI</h3>
+            <p>
+                In order to evaluate how well NCE estimates the parameters for a torus graph, a method
+                of clustering was introduced. The goal is that NCE should be able to cluster data points
+                originating from different brain areas. By introducing a new variable z for '{1, ..., K}'' components,
+                the mixture model can be reparameterized as seen in Matsuda et al. 2019
+                [8]:
+            </p>
+            <img src="nmi-1.png" class="inline-img"></img>
+            <p>
+                Here the notations is identical to the previous, where the estimated parameters are still ϕ
+                and c. p_k(x|ϕ_k) represents the density function for the torus graph component k as seen
+                in the third equation presented in the NCE part. Moreover the above equation returns a probability of the data belonging to a
+                specific component, thus enabling clustering.
+            </p>
+            <p>
+                Hereafter one can investigate how much mutual information there is between the estimated
+                torus graphs and the actual data. For this, a simple normalized mutual information
+                coefficient has been used, where the above equation is used as the input for our estimated
+                values. The mutual information between two vectors, {x, y}, is calculated as:
+            </p>
+            <img src="nmi-2.png" class="inline-img"></img>
+            <p>
+                And the normalized mutual information is:
+            </p>
+            <img src="nmi-3.png" class="inline-img"></img>
+            <p>
+                Where p(x, y) represents the joint probability distribution and p(x), p(y) represents the
+                marginal distributions.  
             </p>
             <hr>
             <h3>3. But how to test if it actually works?</h3>
