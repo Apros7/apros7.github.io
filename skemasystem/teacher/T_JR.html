@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Skema: Julie Rasmussen</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f8f9fa; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+    .navbar { background: #1a252f !important; }
+    .navbar-brand { font-weight: 700; letter-spacing: .5px; }
+
+    .sidebar { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow-y: auto; }
+    .sidebar .list-group-item { font-size: .875rem; padding: .4rem .75rem; }
+    .sidebar .list-group-item.active { background: #2C3E50; border-color: #2C3E50; }
+
+    .schedule-table { border-collapse: collapse; width: 100%; }
+    .schedule-table th, .schedule-table td {
+      border: 1px solid #dee2e6;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0;
+    }
+    .schedule-table th { background: #2C3E50; color: #fff; font-size: .85rem; padding: .5rem; }
+    .block-label { background: #ecf0f1; font-size: .8rem; padding: .5rem .4rem;
+                   font-weight: 600; white-space: nowrap; min-width: 90px; }
+    .lesson-cell { height: 80px; width: 150px; position: relative; }
+    .lesson-inner {
+      height: 100%; display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: .3rem .4rem; gap: 2px;
+    }
+    .lesson-subject { font-size: .82rem; font-weight: 700; line-height: 1.2; }
+    .lesson-meta { font-size: .72rem; color: #555; line-height: 1.2; }
+    .lesson-room { font-size: .68rem; color: #777; }
+    .lesson-tag { font-size: .6rem; padding: 1px 4px; border-radius: 3px;
+                  background: rgba(0,0,0,.15); font-weight: 600; }
+    .empty-cell { background: #fff; }
+
+    .check-pass { color: #27ae60; }
+    .check-fail { color: #e74c3c; }
+    .check-info { color: #2980b9; }
+
+    .card-header { font-weight: 600; }
+    .stat-badge { font-size: .8rem; }
+
+    @media print {
+      .sidebar, .navbar, .no-print { display: none !important; }
+      .schedule-table th, .schedule-table td { font-size: .75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark navbar-expand-lg">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand" href="/skemasystem/index.html">📅 Skemasystem</a>
+    
+    <span class="text-white-50 small ms-3">Eksempel Gymnasium</span>
+    
+    <div class="ms-auto d-flex gap-2">
+      
+      <a href="/skemasystem/constraints.html" class="btn btn-sm btn-outline-light">Constraints</a>
+      
+      
+      <a href="/skemasystem/validation.html" class="btn btn-sm btn-outline-light">Valideringsrapport</a>
+      
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid px-4 py-3">
+  
+    
+  
+
+  
+<div class="row g-3">
+
+  <!-- Sidebar: both classes and teachers always visible -->
+  <div class="col-lg-2 no-print">
+    <div class="sidebar">
+
+      <a href="/skemasystem/index.html" class="btn btn-sm btn-outline-secondary w-100 mb-2">← Hjem</a>
+
+      
+      <div class="small text-muted fw-semibold mb-1 px-1 mt-2">Klasser</div>
+      <div class="list-group list-group-flush shadow-sm mb-3">
+        
+        <a href="/skemasystem/class/1A.html"
+           class="list-group-item list-group-item-action ">
+          1.A
+        </a>
+        
+        <a href="/skemasystem/class/1B.html"
+           class="list-group-item list-group-item-action ">
+          1.B
+        </a>
+        
+        <a href="/skemasystem/class/1C.html"
+           class="list-group-item list-group-item-action ">
+          1.C
+        </a>
+        
+        <a href="/skemasystem/class/2A.html"
+           class="list-group-item list-group-item-action ">
+          2.A
+        </a>
+        
+        <a href="/skemasystem/class/2B.html"
+           class="list-group-item list-group-item-action ">
+          2.B
+        </a>
+        
+        <a href="/skemasystem/class/2C.html"
+           class="list-group-item list-group-item-action ">
+          2.C
+        </a>
+        
+        <a href="/skemasystem/class/3A.html"
+           class="list-group-item list-group-item-action ">
+          3.A
+        </a>
+        
+        <a href="/skemasystem/class/3B.html"
+           class="list-group-item list-group-item-action ">
+          3.B
+        </a>
+        
+      </div>
+      
+
+      
+      <div class="small text-muted fw-semibold mb-1 px-1 mt-2">Lærere</div>
+      <div class="list-group list-group-flush shadow-sm mb-3">
+        
+        <a href="/skemasystem/teacher/T_AH.html"
+           class="list-group-item list-group-item-action ">
+          Anders Hansen
+        </a>
+        
+        <a href="/skemasystem/teacher/T_FN.html"
+           class="list-group-item list-group-item-action ">
+          Freja Nielsen
+        </a>
+        
+        <a href="/skemasystem/teacher/T_MA.html"
+           class="list-group-item list-group-item-action ">
+          Morten Andersen
+        </a>
+        
+        <a href="/skemasystem/teacher/T_NK.html"
+           class="list-group-item list-group-item-action ">
+          Niels Kjær
+        </a>
+        
+        <a href="/skemasystem/teacher/T_BL.html"
+           class="list-group-item list-group-item-action ">
+          Birgitte Larsen
+        </a>
+        
+        <a href="/skemasystem/teacher/T_GS.html"
+           class="list-group-item list-group-item-action ">
+          Gunnar Sørensen
+        </a>
+        
+        <a href="/skemasystem/teacher/T_PK.html"
+           class="list-group-item list-group-item-action ">
+          Pia Kjeldsen
+        </a>
+        
+        <a href="/skemasystem/teacher/T_CJ.html"
+           class="list-group-item list-group-item-action ">
+          Christian Jensen
+        </a>
+        
+        <a href="/skemasystem/teacher/T_HK.html"
+           class="list-group-item list-group-item-action ">
+          Hanne Kristensen
+        </a>
+        
+        <a href="/skemasystem/teacher/T_IB.html"
+           class="list-group-item list-group-item-action ">
+          Ivan Berg
+        </a>
+        
+        <a href="/skemasystem/teacher/T_DM.html"
+           class="list-group-item list-group-item-action ">
+          Dorthe Madsen
+        </a>
+        
+        <a href="/skemasystem/teacher/T_JR.html"
+           class="list-group-item list-group-item-action active">
+          Julie Rasmussen
+        </a>
+        
+        <a href="/skemasystem/teacher/T_KM.html"
+           class="list-group-item list-group-item-action ">
+          Klaus Møller
+        </a>
+        
+        <a href="/skemasystem/teacher/T_RL.html"
+           class="list-group-item list-group-item-action ">
+          Rasmus Lund
+        </a>
+        
+        <a href="/skemasystem/teacher/T_EP.html"
+           class="list-group-item list-group-item-action ">
+          Erik Petersen
+        </a>
+        
+        <a href="/skemasystem/teacher/T_SV.html"
+           class="list-group-item list-group-item-action ">
+          Susanne Vang
+        </a>
+        
+        <a href="/skemasystem/teacher/T_LC.html"
+           class="list-group-item list-group-item-action ">
+          Lone Christensen
+        </a>
+        
+        <a href="/skemasystem/teacher/T_OB.html"
+           class="list-group-item list-group-item-action ">
+          Ole Brandt
+        </a>
+        
+        <a href="/skemasystem/teacher/T_SP.html"
+           class="list-group-item list-group-item-action ">
+          Søren Poulsen
+        </a>
+        
+        <a href="/skemasystem/teacher/T_LH.html"
+           class="list-group-item list-group-item-action ">
+          Lise Hansen
+        </a>
+        
+      </div>
+      
+
+    </div>
+  </div>
+
+  <!-- Schedule grid -->
+  <div class="col-lg-10">
+    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+      <div>
+        <h5 class="mb-0 fw-bold">Skema: Julie Rasmussen</h5>
+        <small class="text-muted">Lærerskema · Eksempel Gymnasium</small>
+      </div>
+      <div class="d-flex gap-2">
+        <button onclick="window.print()" class="btn btn-sm btn-outline-dark">🖨 Print</button>
+        
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-body p-2 overflow-x-auto">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th class="block-label">Blok</th>
+              
+              <th>Mandag</th>
+              
+              <th>Tirsdag</th>
+              
+              <th>Onsdag</th>
+              
+              <th>Torsdag</th>
+              
+              <th>Fredag</th>
+              
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td class="block-label">
+                <strong>Blok 1</strong><br>
+                <span class="text-muted" style="font-size:.7rem">08:00–09:40</span>
+              </td>
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell" style="border-left: 4px solid #1ABC9C;">
+                  <div class="lesson-inner" style="background: #1ABC9C18;">
+                    
+                    <span class="lesson-tag">SR</span>
+                    
+                    <div class="lesson-subject">Biologi</div>
+                    <div class="lesson-meta">SR Biologi (1A+1B)</div>
+                    <div class="lesson-room">📍 Lab 1</div>
+                  </div>
+                </td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+            </tr>
+            
+            <tr>
+              <td class="block-label">
+                <strong>Blok 2</strong><br>
+                <span class="text-muted" style="font-size:.7rem">10:00–11:40</span>
+              </td>
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell" style="border-left: 4px solid #1ABC9C;">
+                  <div class="lesson-inner" style="background: #1ABC9C18;">
+                    
+                    <div class="lesson-subject">Biologi</div>
+                    <div class="lesson-meta">2B</div>
+                    <div class="lesson-room">📍 Lab 1</div>
+                  </div>
+                </td>
+                
+              
+            </tr>
+            
+            <tr>
+              <td class="block-label">
+                <strong>Blok 3</strong><br>
+                <span class="text-muted" style="font-size:.7rem">11:45–12:30</span>
+              </td>
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+            </tr>
+            
+            <tr>
+              <td class="block-label">
+                <strong>Blok 4</strong><br>
+                <span class="text-muted" style="font-size:.7rem">12:30–14:10</span>
+              </td>
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell" style="border-left: 4px solid #1ABC9C;">
+                  <div class="lesson-inner" style="background: #1ABC9C18;">
+                    
+                    <span class="lesson-tag">SR</span>
+                    
+                    <div class="lesson-subject">Biologi</div>
+                    <div class="lesson-meta">SR Biologi (1A+1B)</div>
+                    <div class="lesson-room">📍 Lab 1</div>
+                  </div>
+                </td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+            </tr>
+            
+            <tr>
+              <td class="block-label">
+                <strong>Blok 5</strong><br>
+                <span class="text-muted" style="font-size:.7rem">14:25–16:05</span>
+              </td>
+              
+                
+                
+                <td class="lesson-cell" style="border-left: 4px solid #1ABC9C;">
+                  <div class="lesson-inner" style="background: #1ABC9C18;">
+                    
+                    <div class="lesson-subject">Biologi</div>
+                    <div class="lesson-meta">2B</div>
+                    <div class="lesson-room">📍 Lab 1</div>
+                  </div>
+                </td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+                
+                
+                <td class="lesson-cell" style="border-left: 4px solid #1ABC9C;">
+                  <div class="lesson-inner" style="background: #1ABC9C18;">
+                    
+                    <div class="lesson-subject">Biologi</div>
+                    <div class="lesson-meta">2B</div>
+                    <div class="lesson-room">📍 Lab 2</div>
+                  </div>
+                </td>
+                
+              
+                
+                
+                <td class="lesson-cell empty-cell"></td>
+                
+              
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Subject legend -->
+    <div class="mt-3 d-flex flex-wrap gap-2 no-print">
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #3498DB; font-size:.75rem">
+        Matematik
+      </span>
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #E74C3C; font-size:.75rem">
+        Dansk
+      </span>
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #2ECC71; font-size:.75rem">
+        Engelsk
+      </span>
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #F39C12; font-size:.75rem">
+        Historie
+      </span>
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #95A5A6; font-size:.75rem">
+        Samfundsfag
+      </span>
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #9B59B6; font-size:.75rem">
+        Fysik
+      </span>
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #E67E22; font-size:.75rem">
+        Kemi
+      </span>
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #1ABC9C; font-size:.75rem">
+        Biologi
+      </span>
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #16A085; font-size:.75rem">
+        Geografi
+      </span>
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #27AE60; font-size:.75rem">
+        Idræt
+      </span>
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #D35400; font-size:.75rem">
+        Musik
+      </span>
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #8E44AD; font-size:.75rem">
+        Tysk
+      </span>
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #C0392B; font-size:.75rem">
+        Almen studieforberedelse
+      </span>
+      
+      <span class="badge rounded-pill fw-normal px-3 py-2"
+            style="background: #BDC3C7; font-size:.75rem">
+        Klassens time
+      </span>
+      
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

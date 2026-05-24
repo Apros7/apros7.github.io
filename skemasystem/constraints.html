@@ -1,0 +1,2099 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Constraints — Eksempel Gymnasium</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f8f9fa; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+    .navbar { background: #1a252f !important; }
+    .navbar-brand { font-weight: 700; letter-spacing: .5px; }
+
+    .sidebar { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow-y: auto; }
+    .sidebar .list-group-item { font-size: .875rem; padding: .4rem .75rem; }
+    .sidebar .list-group-item.active { background: #2C3E50; border-color: #2C3E50; }
+
+    .schedule-table { border-collapse: collapse; width: 100%; }
+    .schedule-table th, .schedule-table td {
+      border: 1px solid #dee2e6;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0;
+    }
+    .schedule-table th { background: #2C3E50; color: #fff; font-size: .85rem; padding: .5rem; }
+    .block-label { background: #ecf0f1; font-size: .8rem; padding: .5rem .4rem;
+                   font-weight: 600; white-space: nowrap; min-width: 90px; }
+    .lesson-cell { height: 80px; width: 150px; position: relative; }
+    .lesson-inner {
+      height: 100%; display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: .3rem .4rem; gap: 2px;
+    }
+    .lesson-subject { font-size: .82rem; font-weight: 700; line-height: 1.2; }
+    .lesson-meta { font-size: .72rem; color: #555; line-height: 1.2; }
+    .lesson-room { font-size: .68rem; color: #777; }
+    .lesson-tag { font-size: .6rem; padding: 1px 4px; border-radius: 3px;
+                  background: rgba(0,0,0,.15); font-weight: 600; }
+    .empty-cell { background: #fff; }
+
+    .check-pass { color: #27ae60; }
+    .check-fail { color: #e74c3c; }
+    .check-info { color: #2980b9; }
+
+    .card-header { font-weight: 600; }
+    .stat-badge { font-size: .8rem; }
+
+    @media print {
+      .sidebar, .navbar, .no-print { display: none !important; }
+      .schedule-table th, .schedule-table td { font-size: .75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark navbar-expand-lg">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand" href="/skemasystem/index.html">📅 Skemasystem</a>
+    
+    <span class="text-white-50 small ms-3">Eksempel Gymnasium</span>
+    
+    <div class="ms-auto d-flex gap-2">
+      
+      <a href="/skemasystem/constraints.html" class="btn btn-sm btn-outline-light">Constraints</a>
+      
+      
+      <a href="/skemasystem/validation.html" class="btn btn-sm btn-outline-light">Valideringsrapport</a>
+      
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid px-4 py-3">
+  
+    
+  
+
+  
+<div class="row g-3">
+
+  <!-- Sidebar -->
+  <div class="col-lg-2 no-print">
+    <div class="sidebar">
+      <a href="/skemasystem/index.html" class="btn btn-sm btn-outline-secondary w-100 mb-2">← Hjem</a>
+      
+      <div class="small text-muted fw-semibold mb-1 px-1 mt-2">Klasser</div>
+      <div class="list-group list-group-flush shadow-sm mb-3">
+        <a href="/skemasystem/class/1A.html" class="list-group-item list-group-item-action">1.A</a><a href="/skemasystem/class/1B.html" class="list-group-item list-group-item-action">1.B</a><a href="/skemasystem/class/1C.html" class="list-group-item list-group-item-action">1.C</a><a href="/skemasystem/class/2A.html" class="list-group-item list-group-item-action">2.A</a><a href="/skemasystem/class/2B.html" class="list-group-item list-group-item-action">2.B</a><a href="/skemasystem/class/2C.html" class="list-group-item list-group-item-action">2.C</a><a href="/skemasystem/class/3A.html" class="list-group-item list-group-item-action">3.A</a><a href="/skemasystem/class/3B.html" class="list-group-item list-group-item-action">3.B</a>
+      </div>
+      
+      
+      <div class="small text-muted fw-semibold mb-1 px-1 mt-2">Lærere</div>
+      <div class="list-group list-group-flush shadow-sm">
+        <a href="/skemasystem/teacher/T_AH.html" class="list-group-item list-group-item-action">Anders Hansen</a><a href="/skemasystem/teacher/T_FN.html" class="list-group-item list-group-item-action">Freja Nielsen</a><a href="/skemasystem/teacher/T_MA.html" class="list-group-item list-group-item-action">Morten Andersen</a><a href="/skemasystem/teacher/T_NK.html" class="list-group-item list-group-item-action">Niels Kjær</a><a href="/skemasystem/teacher/T_BL.html" class="list-group-item list-group-item-action">Birgitte Larsen</a><a href="/skemasystem/teacher/T_GS.html" class="list-group-item list-group-item-action">Gunnar Sørensen</a><a href="/skemasystem/teacher/T_PK.html" class="list-group-item list-group-item-action">Pia Kjeldsen</a><a href="/skemasystem/teacher/T_CJ.html" class="list-group-item list-group-item-action">Christian Jensen</a><a href="/skemasystem/teacher/T_HK.html" class="list-group-item list-group-item-action">Hanne Kristensen</a><a href="/skemasystem/teacher/T_IB.html" class="list-group-item list-group-item-action">Ivan Berg</a><a href="/skemasystem/teacher/T_DM.html" class="list-group-item list-group-item-action">Dorthe Madsen</a><a href="/skemasystem/teacher/T_JR.html" class="list-group-item list-group-item-action">Julie Rasmussen</a><a href="/skemasystem/teacher/T_KM.html" class="list-group-item list-group-item-action">Klaus Møller</a><a href="/skemasystem/teacher/T_RL.html" class="list-group-item list-group-item-action">Rasmus Lund</a><a href="/skemasystem/teacher/T_EP.html" class="list-group-item list-group-item-action">Erik Petersen</a><a href="/skemasystem/teacher/T_SV.html" class="list-group-item list-group-item-action">Susanne Vang</a><a href="/skemasystem/teacher/T_LC.html" class="list-group-item list-group-item-action">Lone Christensen</a><a href="/skemasystem/teacher/T_OB.html" class="list-group-item list-group-item-action">Ole Brandt</a><a href="/skemasystem/teacher/T_SP.html" class="list-group-item list-group-item-action">Søren Poulsen</a><a href="/skemasystem/teacher/T_LH.html" class="list-group-item list-group-item-action">Lise Hansen</a>
+      </div>
+      
+    </div>
+  </div>
+
+  <div class="col-lg-10">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h5 class="fw-bold mb-0">Constraints & konfigurationsoversigt</h5>
+        <small class="text-muted">Eksempel Gymnasium · 67 undervisningsforhold · 156 blokke/uge i alt</small>
+      </div>
+    </div>
+
+    <!-- ── Klasse-belastning ─────────────────────────────────────────── -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header fw-semibold">Klasser — ugentlig belastning</div>
+      <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Klasse</th>
+              <th>År</th>
+              <th class="text-center">Blokke/uge</th>
+              <th class="text-center">Ledige slots</th>
+              <th>Udnyttelse</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            
+            <tr>
+              <td class="fw-semibold">1.A</td>
+              <td>1. g</td>
+              <td class="text-center">
+                <span class="badge bg-dark">22</span>
+              </td>
+              <td class="text-center text-muted">3</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="progress flex-grow-1" style="height:8px">
+                    <div class="progress-bar bg-warning"
+                         style="width:88%"></div>
+                  </div>
+                  <small class="text-muted">88%</small>
+                </div>
+              </td>
+            </tr>
+            
+            
+            <tr>
+              <td class="fw-semibold">1.B</td>
+              <td>1. g</td>
+              <td class="text-center">
+                <span class="badge bg-dark">23</span>
+              </td>
+              <td class="text-center text-muted">2</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="progress flex-grow-1" style="height:8px">
+                    <div class="progress-bar bg-danger"
+                         style="width:92%"></div>
+                  </div>
+                  <small class="text-muted">92%</small>
+                </div>
+              </td>
+            </tr>
+            
+            
+            <tr>
+              <td class="fw-semibold">1.C</td>
+              <td>1. g</td>
+              <td class="text-center">
+                <span class="badge bg-dark">22</span>
+              </td>
+              <td class="text-center text-muted">3</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="progress flex-grow-1" style="height:8px">
+                    <div class="progress-bar bg-warning"
+                         style="width:88%"></div>
+                  </div>
+                  <small class="text-muted">88%</small>
+                </div>
+              </td>
+            </tr>
+            
+            
+            <tr>
+              <td class="fw-semibold">2.A</td>
+              <td>2. g</td>
+              <td class="text-center">
+                <span class="badge bg-dark">20</span>
+              </td>
+              <td class="text-center text-muted">5</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="progress flex-grow-1" style="height:8px">
+                    <div class="progress-bar bg-warning"
+                         style="width:80%"></div>
+                  </div>
+                  <small class="text-muted">80%</small>
+                </div>
+              </td>
+            </tr>
+            
+            
+            <tr>
+              <td class="fw-semibold">2.B</td>
+              <td>2. g</td>
+              <td class="text-center">
+                <span class="badge bg-dark">20</span>
+              </td>
+              <td class="text-center text-muted">5</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="progress flex-grow-1" style="height:8px">
+                    <div class="progress-bar bg-warning"
+                         style="width:80%"></div>
+                  </div>
+                  <small class="text-muted">80%</small>
+                </div>
+              </td>
+            </tr>
+            
+            
+            <tr>
+              <td class="fw-semibold">2.C</td>
+              <td>2. g</td>
+              <td class="text-center">
+                <span class="badge bg-dark">20</span>
+              </td>
+              <td class="text-center text-muted">5</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="progress flex-grow-1" style="height:8px">
+                    <div class="progress-bar bg-warning"
+                         style="width:80%"></div>
+                  </div>
+                  <small class="text-muted">80%</small>
+                </div>
+              </td>
+            </tr>
+            
+            
+            <tr>
+              <td class="fw-semibold">3.A</td>
+              <td>3. g</td>
+              <td class="text-center">
+                <span class="badge bg-dark">17</span>
+              </td>
+              <td class="text-center text-muted">8</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="progress flex-grow-1" style="height:8px">
+                    <div class="progress-bar bg-success"
+                         style="width:68%"></div>
+                  </div>
+                  <small class="text-muted">68%</small>
+                </div>
+              </td>
+            </tr>
+            
+            
+            <tr>
+              <td class="fw-semibold">3.B</td>
+              <td>3. g</td>
+              <td class="text-center">
+                <span class="badge bg-dark">18</span>
+              </td>
+              <td class="text-center text-muted">7</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="progress flex-grow-1" style="height:8px">
+                    <div class="progress-bar bg-success"
+                         style="width:72%"></div>
+                  </div>
+                  <small class="text-muted">72%</small>
+                </div>
+              </td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Lærertilgængelighed & præferencer ────────────────────────── -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header fw-semibold">
+        Lærertilgængelighed, max-konsekvens & præferencer
+        <span class="badge bg-secondary ms-2">Hard constraint: utilgængelighed + max-konsekvens</span>
+        <span class="badge bg-warning text-dark ms-1">Soft constraint: præferencer</span>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Lærer</th>
+              <th>Fag</th>
+              <th>Max konsekutive blokke</th>
+              <th>
+                <span class="badge bg-secondary">Ikke tilgængelig</span>
+              </th>
+              <th>
+                <span class="badge bg-warning text-dark">Foretrækker at undgå</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td class="fw-semibold small">Anders Hansen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">MAT</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">FYS</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-warning text-dark">
+                  ≤ 3
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Fredag: hele dagen</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-warning-emphasis">⚠️ Mandag: Blok 1</div>
+                  
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Freja Nielsen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">MAT</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">GEO</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Onsdag: Blok 4, Blok 5</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-warning-emphasis">⚠️ Tirsdag: Blok 1</div>
+                  
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Morten Andersen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">MAT</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">SAM</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Niels Kjær</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">MAT</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">FYS</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Alle dage: Blok 5</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-warning-emphasis">⚠️ Mandag: Blok 1, Blok 2</div>
+                  
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Birgitte Larsen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">DAN</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">HIS</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Torsdag: Blok 4, Blok 5</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Gunnar Sørensen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">DAN</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">AT</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-warning-emphasis">⚠️ Fredag: Blok 4, Blok 5</div>
+                  
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Pia Kjeldsen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">DAN</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">ENG</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-warning text-dark">
+                  ≤ 3
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Tirsdag: hele dagen</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Christian Jensen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">ENG</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">TYS</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Onsdag: Blok 4, Blok 5</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-warning-emphasis">⚠️ Fredag: Blok 1</div>
+                  
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Hanne Kristensen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">ENG</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">HIS</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Fredag: Blok 4, Blok 5</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Ivan Berg</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">FYS</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">KEM</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Dorthe Madsen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">KEM</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">BIO</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Mandag: Blok 1, Blok 2</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Julie Rasmussen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">BIO</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">GEO</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Klaus Møller</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">HIS</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">SAM</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Torsdag: Blok 1, Blok 2</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Rasmus Lund</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">SAM</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">HIS</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">GEO</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Erik Petersen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">IDR</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Onsdag: hele dagen</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Susanne Vang</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">IDR</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Mandag: Blok 1, Blok 2</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-warning-emphasis">⚠️ Fredag: Blok 5</div>
+                  
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Lone Christensen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">MUS</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">DAN</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">KLA</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-warning text-dark">
+                  ≤ 3
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Fredag: Blok 4, Blok 5</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Ole Brandt</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">TYS</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">ENG</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Tirsdag: Blok 4, Blok 5</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Søren Poulsen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">MAT</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">SAM</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Fredag: hele dagen</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="fw-semibold small">Lise Hansen</td>
+              <td>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">BIO</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">KEM</span>
+                
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size:.7rem">GEO</span>
+                
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light text-dark border">
+                  ≤ 4
+                </span>
+              </td>
+              <td class="small">
+                
+                  
+                  <div class="text-danger">🚫 Mandag: Blok 4, Blok 5</div>
+                  
+                
+              </td>
+              <td class="small">
+                
+                  <span class="text-muted">—</span>
+                
+              </td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Hard constraints (altid gældende) ───────────────────────── -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header fw-semibold">
+        Altid-gældende hard constraints
+        <span class="badge bg-secondary ms-2">Håndhævet af CP-SAT solveren</span>
+      </div>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex gap-2 align-items-start">
+            <span class="text-success mt-1">✅</span>
+            <div>
+              <strong>Ingen dobbeltbooking — lærere</strong><br>
+              <small class="text-muted">Ingen lærer underviser i to klasser/grupper på samme tidspunkt.</small>
+            </div>
+          </li>
+          <li class="list-group-item d-flex gap-2 align-items-start">
+            <span class="text-success mt-1">✅</span>
+            <div>
+              <strong>Ingen dobbeltbooking — klasser</strong><br>
+              <small class="text-muted">Ingen klasse har to fag på samme tidspunkt (inkl. tværgående grupper).</small>
+            </div>
+          </li>
+          <li class="list-group-item d-flex gap-2 align-items-start">
+            <span class="text-success mt-1">✅</span>
+            <div>
+              <strong>Ingen dobbeltbooking — lokaler</strong><br>
+              <small class="text-muted">Maks. ét hold per lokale per blok. Lokaletyper: classroom, lab, gym, music.</small>
+            </div>
+          </li>
+          <li class="list-group-item d-flex gap-2 align-items-start">
+            <span class="text-success mt-1">✅</span>
+            <div>
+              <strong>Ugentlige lektioner overholdt</strong><br>
+              <small class="text-muted">Hvert undervisningsforhold planlægges præcist det krævede antal blokke per uge.</small>
+            </div>
+          </li>
+          <li class="list-group-item d-flex gap-2 align-items-start">
+            <span class="text-success mt-1">✅</span>
+            <div>
+              <strong>Lærertilgængelighed (individuel)</strong><br>
+              <small class="text-muted">Se tabellen ovenfor for specifikke dage/blokke per lærer.</small>
+            </div>
+          </li>
+          <li class="list-group-item d-flex gap-2 align-items-start">
+            <span class="text-success mt-1">✅</span>
+            <div>
+              <strong>Max konsekvente blokke per lærer</strong><br>
+              <small class="text-muted">Solveren sikrer ingen lærer underviser i flere blokke i træk end tilladt (se tabel ovenfor).</small>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Soft constraints / optimeringsmål ─────────────────────────── -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header fw-semibold">
+        Optimeringsmål (soft constraints)
+        <span class="badge bg-warning text-dark ms-2">Minimeres af solveren</span>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <thead class="table-light">
+            <tr><th>Mål</th><th class="text-center">Vægt</th><th>Beskrivelse</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-semibold">Lærerhul</td>
+              <td class="text-center"><span class="badge bg-danger">20</span></td>
+              <td class="small text-muted">Straf per fri blok imellem to undervisningsblokke samme dag (alle størrelser detekteres).</td>
+            </tr>
+            <tr>
+              <td class="fw-semibold">Elevhul</td>
+              <td class="text-center"><span class="badge bg-warning text-dark">15</span></td>
+              <td class="small text-muted">Straf per fri blok imellem to undervisningsblokke for en klasse samme dag.</td>
+            </tr>
+            <tr>
+              <td class="fw-semibold">Fagspredning</td>
+              <td class="text-center"><span class="badge bg-info text-dark">6</span></td>
+              <td class="small text-muted">Straf hvis samme fag undervises mere end én gang på samme dag.</td>
+            </tr>
+            <tr>
+              <td class="fw-semibold">Lærerpræferencer</td>
+              <td class="text-center"><span class="badge bg-secondary">4</span></td>
+              <td class="small text-muted">Straf per lektion planlagt på et tidspunkt læreren foretrækker at undgå.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Undervisningsforhold per år ────────────────────────────────── -->
+    
+    <div class="card shadow-sm mb-3">
+      <div class="card-header fw-semibold">
+        1. g — undervisningsforhold
+        <span class="badge bg-light text-dark border ms-2">28 hold</span>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr><th>Hold/Gruppe</th><th>Fag</th><th>Lærer</th><th class="text-center">Blokke/uge</th><th>Type</th></tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td class="small fw-semibold">1A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#E74C3C; font-size:.75rem">
+                  Dansk
+                </span>
+              </td>
+              <td class="small">Birgitte Larsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">4</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#3498DB; font-size:.75rem">
+                  Matematik
+                </span>
+              </td>
+              <td class="small">Anders Hansen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">4</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#2ECC71; font-size:.75rem">
+                  Engelsk
+                </span>
+              </td>
+              <td class="small">Christian Jensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#F39C12; font-size:.75rem">
+                  Historie
+                </span>
+              </td>
+              <td class="small">Klaus Møller</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#95A5A6; font-size:.75rem">
+                  Samfundsfag
+                </span>
+              </td>
+              <td class="small">Rasmus Lund</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#9B59B6; font-size:.75rem">
+                  Fysik
+                </span>
+              </td>
+              <td class="small">Ivan Berg</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#27AE60; font-size:.75rem">
+                  Idræt
+                </span>
+              </td>
+              <td class="small">Erik Petersen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#BDC3C7; font-size:.75rem">
+                  Klassens time
+                </span>
+              </td>
+              <td class="small">Birgitte Larsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#E74C3C; font-size:.75rem">
+                  Dansk
+                </span>
+              </td>
+              <td class="small">Gunnar Sørensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">4</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#3498DB; font-size:.75rem">
+                  Matematik
+                </span>
+              </td>
+              <td class="small">Freja Nielsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">4</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#2ECC71; font-size:.75rem">
+                  Engelsk
+                </span>
+              </td>
+              <td class="small">Hanne Kristensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#F39C12; font-size:.75rem">
+                  Historie
+                </span>
+              </td>
+              <td class="small">Birgitte Larsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#95A5A6; font-size:.75rem">
+                  Samfundsfag
+                </span>
+              </td>
+              <td class="small">Klaus Møller</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#1ABC9C; font-size:.75rem">
+                  Biologi
+                </span>
+              </td>
+              <td class="small">Dorthe Madsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#27AE60; font-size:.75rem">
+                  Idræt
+                </span>
+              </td>
+              <td class="small">Susanne Vang</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#16A085; font-size:.75rem">
+                  Geografi
+                </span>
+              </td>
+              <td class="small">Rasmus Lund</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#BDC3C7; font-size:.75rem">
+                  Klassens time
+                </span>
+              </td>
+              <td class="small">Gunnar Sørensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#E74C3C; font-size:.75rem">
+                  Dansk
+                </span>
+              </td>
+              <td class="small">Pia Kjeldsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">4</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#3498DB; font-size:.75rem">
+                  Matematik
+                </span>
+              </td>
+              <td class="small">Morten Andersen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">4</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#2ECC71; font-size:.75rem">
+                  Engelsk
+                </span>
+              </td>
+              <td class="small">Ole Brandt</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#F39C12; font-size:.75rem">
+                  Historie
+                </span>
+              </td>
+              <td class="small">Rasmus Lund</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#95A5A6; font-size:.75rem">
+                  Samfundsfag
+                </span>
+              </td>
+              <td class="small">Morten Andersen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#E67E22; font-size:.75rem">
+                  Kemi
+                </span>
+              </td>
+              <td class="small">Lise Hansen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#27AE60; font-size:.75rem">
+                  Idræt
+                </span>
+              </td>
+              <td class="small">Erik Petersen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#16A085; font-size:.75rem">
+                  Geografi
+                </span>
+              </td>
+              <td class="small">Freja Nielsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">1C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#BDC3C7; font-size:.75rem">
+                  Klassens time
+                </span>
+              </td>
+              <td class="small">Pia Kjeldsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">SR Biologi (1A+1B)</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#1ABC9C; font-size:.75rem">
+                  Biologi
+                </span>
+              </td>
+              <td class="small">Julie Rasmussen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Studieretning
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">SR Tysk (1A+1C)</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#8E44AD; font-size:.75rem">
+                  Tysk
+                </span>
+              </td>
+              <td class="small">Christian Jensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Studieretning
+              </td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="card shadow-sm mb-3">
+      <div class="card-header fw-semibold">
+        2. g — undervisningsforhold
+        <span class="badge bg-light text-dark border ms-2">25 hold</span>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr><th>Hold/Gruppe</th><th>Fag</th><th>Lærer</th><th class="text-center">Blokke/uge</th><th>Type</th></tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td class="small fw-semibold">2A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#E74C3C; font-size:.75rem">
+                  Dansk
+                </span>
+              </td>
+              <td class="small">Lone Christensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#3498DB; font-size:.75rem">
+                  Matematik
+                </span>
+              </td>
+              <td class="small">Niels Kjær</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#2ECC71; font-size:.75rem">
+                  Engelsk
+                </span>
+              </td>
+              <td class="small">Pia Kjeldsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#9B59B6; font-size:.75rem">
+                  Fysik
+                </span>
+              </td>
+              <td class="small">Ivan Berg</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#E67E22; font-size:.75rem">
+                  Kemi
+                </span>
+              </td>
+              <td class="small">Dorthe Madsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#27AE60; font-size:.75rem">
+                  Idræt
+                </span>
+              </td>
+              <td class="small">Susanne Vang</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#F39C12; font-size:.75rem">
+                  Historie
+                </span>
+              </td>
+              <td class="small">Klaus Møller</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#BDC3C7; font-size:.75rem">
+                  Klassens time
+                </span>
+              </td>
+              <td class="small">Niels Kjær</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#E74C3C; font-size:.75rem">
+                  Dansk
+                </span>
+              </td>
+              <td class="small">Birgitte Larsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#3498DB; font-size:.75rem">
+                  Matematik
+                </span>
+              </td>
+              <td class="small">Anders Hansen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#2ECC71; font-size:.75rem">
+                  Engelsk
+                </span>
+              </td>
+              <td class="small">Christian Jensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#9B59B6; font-size:.75rem">
+                  Fysik
+                </span>
+              </td>
+              <td class="small">Anders Hansen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#1ABC9C; font-size:.75rem">
+                  Biologi
+                </span>
+              </td>
+              <td class="small">Julie Rasmussen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#27AE60; font-size:.75rem">
+                  Idræt
+                </span>
+              </td>
+              <td class="small">Erik Petersen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#95A5A6; font-size:.75rem">
+                  Samfundsfag
+                </span>
+              </td>
+              <td class="small">Rasmus Lund</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#BDC3C7; font-size:.75rem">
+                  Klassens time
+                </span>
+              </td>
+              <td class="small">Gunnar Sørensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#E74C3C; font-size:.75rem">
+                  Dansk
+                </span>
+              </td>
+              <td class="small">Gunnar Sørensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#3498DB; font-size:.75rem">
+                  Matematik
+                </span>
+              </td>
+              <td class="small">Søren Poulsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#2ECC71; font-size:.75rem">
+                  Engelsk
+                </span>
+              </td>
+              <td class="small">Hanne Kristensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#F39C12; font-size:.75rem">
+                  Historie
+                </span>
+              </td>
+              <td class="small">Birgitte Larsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#95A5A6; font-size:.75rem">
+                  Samfundsfag
+                </span>
+              </td>
+              <td class="small">Søren Poulsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#27AE60; font-size:.75rem">
+                  Idræt
+                </span>
+              </td>
+              <td class="small">Susanne Vang</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#E67E22; font-size:.75rem">
+                  Kemi
+                </span>
+              </td>
+              <td class="small">Lise Hansen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">2C</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#BDC3C7; font-size:.75rem">
+                  Klassens time
+                </span>
+              </td>
+              <td class="small">Gunnar Sørensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">AT 2. år (2A+2B+2C)</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#C0392B; font-size:.75rem">
+                  Almen studieforberedelse
+                </span>
+              </td>
+              <td class="small">Gunnar Sørensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                AT
+              </td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="card shadow-sm mb-3">
+      <div class="card-header fw-semibold">
+        3. g — undervisningsforhold
+        <span class="badge bg-light text-dark border ms-2">14 hold</span>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr><th>Hold/Gruppe</th><th>Fag</th><th>Lærer</th><th class="text-center">Blokke/uge</th><th>Type</th></tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td class="small fw-semibold">3A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#E74C3C; font-size:.75rem">
+                  Dansk
+                </span>
+              </td>
+              <td class="small">Pia Kjeldsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">3A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#3498DB; font-size:.75rem">
+                  Matematik
+                </span>
+              </td>
+              <td class="small">Niels Kjær</td>
+              <td class="text-center">
+                <span class="badge bg-dark">4</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">3A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#2ECC71; font-size:.75rem">
+                  Engelsk
+                </span>
+              </td>
+              <td class="small">Ole Brandt</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">3A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#9B59B6; font-size:.75rem">
+                  Fysik
+                </span>
+              </td>
+              <td class="small">Niels Kjær</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">3A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#E67E22; font-size:.75rem">
+                  Kemi
+                </span>
+              </td>
+              <td class="small">Ivan Berg</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">3A</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#27AE60; font-size:.75rem">
+                  Idræt
+                </span>
+              </td>
+              <td class="small">Erik Petersen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">3B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#E74C3C; font-size:.75rem">
+                  Dansk
+                </span>
+              </td>
+              <td class="small">Lone Christensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">3B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#3498DB; font-size:.75rem">
+                  Matematik
+                </span>
+              </td>
+              <td class="small">Freja Nielsen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">4</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">3B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#2ECC71; font-size:.75rem">
+                  Engelsk
+                </span>
+              </td>
+              <td class="small">Hanne Kristensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">3B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#1ABC9C; font-size:.75rem">
+                  Biologi
+                </span>
+              </td>
+              <td class="small">Lise Hansen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">3</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">3B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#95A5A6; font-size:.75rem">
+                  Samfundsfag
+                </span>
+              </td>
+              <td class="small">Klaus Møller</td>
+              <td class="text-center">
+                <span class="badge bg-dark">2</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">3B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#27AE60; font-size:.75rem">
+                  Idræt
+                </span>
+              </td>
+              <td class="small">Susanne Vang</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">3B</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#BDC3C7; font-size:.75rem">
+                  Klassens time
+                </span>
+              </td>
+              <td class="small">Lone Christensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Stamklasse
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="small fw-semibold">Musik valgfag (3A+3B)</td>
+              <td>
+                <span class="badge rounded-pill px-2" style="background:#D35400; font-size:.75rem">
+                  Musik
+                </span>
+              </td>
+              <td class="small">Lone Christensen</td>
+              <td class="text-center">
+                <span class="badge bg-dark">1</span>
+              </td>
+              <td class="small text-muted">
+                Studieretning
+              </td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

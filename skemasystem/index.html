@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eksempel Gymnasium — Skemaoversigt</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f8f9fa; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+    .navbar { background: #1a252f !important; }
+    .navbar-brand { font-weight: 700; letter-spacing: .5px; }
+
+    .sidebar { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow-y: auto; }
+    .sidebar .list-group-item { font-size: .875rem; padding: .4rem .75rem; }
+    .sidebar .list-group-item.active { background: #2C3E50; border-color: #2C3E50; }
+
+    .schedule-table { border-collapse: collapse; width: 100%; }
+    .schedule-table th, .schedule-table td {
+      border: 1px solid #dee2e6;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0;
+    }
+    .schedule-table th { background: #2C3E50; color: #fff; font-size: .85rem; padding: .5rem; }
+    .block-label { background: #ecf0f1; font-size: .8rem; padding: .5rem .4rem;
+                   font-weight: 600; white-space: nowrap; min-width: 90px; }
+    .lesson-cell { height: 80px; width: 150px; position: relative; }
+    .lesson-inner {
+      height: 100%; display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: .3rem .4rem; gap: 2px;
+    }
+    .lesson-subject { font-size: .82rem; font-weight: 700; line-height: 1.2; }
+    .lesson-meta { font-size: .72rem; color: #555; line-height: 1.2; }
+    .lesson-room { font-size: .68rem; color: #777; }
+    .lesson-tag { font-size: .6rem; padding: 1px 4px; border-radius: 3px;
+                  background: rgba(0,0,0,.15); font-weight: 600; }
+    .empty-cell { background: #fff; }
+
+    .check-pass { color: #27ae60; }
+    .check-fail { color: #e74c3c; }
+    .check-info { color: #2980b9; }
+
+    .card-header { font-weight: 600; }
+    .stat-badge { font-size: .8rem; }
+
+    @media print {
+      .sidebar, .navbar, .no-print { display: none !important; }
+      .schedule-table th, .schedule-table td { font-size: .75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark navbar-expand-lg">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand" href="/skemasystem/index.html">📅 Skemasystem</a>
+    
+    <span class="text-white-50 small ms-3">Eksempel Gymnasium</span>
+    
+    <div class="ms-auto d-flex gap-2">
+      
+      <a href="/skemasystem/constraints.html" class="btn btn-sm btn-outline-light">Constraints</a>
+      
+      
+      <a href="/skemasystem/validation.html" class="btn btn-sm btn-outline-light">Valideringsrapport</a>
+      
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid px-4 py-3">
+  
+    
+  
+
+  
+<div class="row g-4">
+  <div class="col-12">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h4 class="fw-bold mb-1">Eksempel Gymnasium</h4>
+        <small class="text-muted">
+          8 klasser &middot;
+          20 lærere &middot;
+          Løsningsstatus:
+          <span class="badge bg-success">OPTIMAL</span>
+          &middot; Score: 0
+          &middot; 0.2s
+        </small>
+      </div>
+      <div class="d-flex gap-2 no-print">
+        <a href="/skemasystem/constraints.html" class="btn btn-sm btn-outline-secondary">Constraints</a>
+        <a href="/skemasystem/validation.html" class="btn btn-sm btn-outline-secondary">Valideringsrapport</a>
+      </div>
+    </div>
+
+    
+    
+    <div class="alert alert-success d-flex align-items-center gap-2 mb-4">
+      <span style="font-size:1.4rem">✅</span>
+      <div>
+        
+          <strong>Alle hard constraints er overholdt.</strong>
+          Skemaet er bevist gyldigt af CP-SAT solveren.
+        
+        <a href="/skemasystem/validation.html" class="ms-2 small">Se fuld rapport →</a>
+      </div>
+    </div>
+
+    <div class="row g-4">
+
+      <!-- Class schedules -->
+      <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header fw-semibold">Klasseskemaer</div>
+          <div class="card-body">
+            
+            
+            
+            <div class="mb-3">
+              <div class="small text-muted fw-semibold mb-2">1. g</div>
+              <div class="d-flex flex-wrap gap-2">
+                
+                <a href="/skemasystem/class/1A.html"
+                   class="btn btn-outline-dark btn-sm">1.A</a>
+                
+                <a href="/skemasystem/class/1B.html"
+                   class="btn btn-outline-dark btn-sm">1.B</a>
+                
+                <a href="/skemasystem/class/1C.html"
+                   class="btn btn-outline-dark btn-sm">1.C</a>
+                
+              </div>
+            </div>
+            
+            
+            
+            
+            <div class="mb-3">
+              <div class="small text-muted fw-semibold mb-2">2. g</div>
+              <div class="d-flex flex-wrap gap-2">
+                
+                <a href="/skemasystem/class/2A.html"
+                   class="btn btn-outline-dark btn-sm">2.A</a>
+                
+                <a href="/skemasystem/class/2B.html"
+                   class="btn btn-outline-dark btn-sm">2.B</a>
+                
+                <a href="/skemasystem/class/2C.html"
+                   class="btn btn-outline-dark btn-sm">2.C</a>
+                
+              </div>
+            </div>
+            
+            
+            
+            
+            <div class="mb-3">
+              <div class="small text-muted fw-semibold mb-2">3. g</div>
+              <div class="d-flex flex-wrap gap-2">
+                
+                <a href="/skemasystem/class/3A.html"
+                   class="btn btn-outline-dark btn-sm">3.A</a>
+                
+                <a href="/skemasystem/class/3B.html"
+                   class="btn btn-outline-dark btn-sm">3.B</a>
+                
+              </div>
+            </div>
+            
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- Teacher schedules -->
+      <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header fw-semibold">Lærerskemaer</div>
+          <div class="card-body">
+            <div class="d-flex flex-wrap gap-2">
+              
+              <a href="/skemasystem/teacher/T_AH.html"
+                 class="btn btn-outline-secondary btn-sm">Anders Hansen</a>
+              
+              <a href="/skemasystem/teacher/T_BL.html"
+                 class="btn btn-outline-secondary btn-sm">Birgitte Larsen</a>
+              
+              <a href="/skemasystem/teacher/T_CJ.html"
+                 class="btn btn-outline-secondary btn-sm">Christian Jensen</a>
+              
+              <a href="/skemasystem/teacher/T_DM.html"
+                 class="btn btn-outline-secondary btn-sm">Dorthe Madsen</a>
+              
+              <a href="/skemasystem/teacher/T_EP.html"
+                 class="btn btn-outline-secondary btn-sm">Erik Petersen</a>
+              
+              <a href="/skemasystem/teacher/T_FN.html"
+                 class="btn btn-outline-secondary btn-sm">Freja Nielsen</a>
+              
+              <a href="/skemasystem/teacher/T_GS.html"
+                 class="btn btn-outline-secondary btn-sm">Gunnar Sørensen</a>
+              
+              <a href="/skemasystem/teacher/T_HK.html"
+                 class="btn btn-outline-secondary btn-sm">Hanne Kristensen</a>
+              
+              <a href="/skemasystem/teacher/T_IB.html"
+                 class="btn btn-outline-secondary btn-sm">Ivan Berg</a>
+              
+              <a href="/skemasystem/teacher/T_JR.html"
+                 class="btn btn-outline-secondary btn-sm">Julie Rasmussen</a>
+              
+              <a href="/skemasystem/teacher/T_KM.html"
+                 class="btn btn-outline-secondary btn-sm">Klaus Møller</a>
+              
+              <a href="/skemasystem/teacher/T_LH.html"
+                 class="btn btn-outline-secondary btn-sm">Lise Hansen</a>
+              
+              <a href="/skemasystem/teacher/T_LC.html"
+                 class="btn btn-outline-secondary btn-sm">Lone Christensen</a>
+              
+              <a href="/skemasystem/teacher/T_MA.html"
+                 class="btn btn-outline-secondary btn-sm">Morten Andersen</a>
+              
+              <a href="/skemasystem/teacher/T_NK.html"
+                 class="btn btn-outline-secondary btn-sm">Niels Kjær</a>
+              
+              <a href="/skemasystem/teacher/T_OB.html"
+                 class="btn btn-outline-secondary btn-sm">Ole Brandt</a>
+              
+              <a href="/skemasystem/teacher/T_PK.html"
+                 class="btn btn-outline-secondary btn-sm">Pia Kjeldsen</a>
+              
+              <a href="/skemasystem/teacher/T_RL.html"
+                 class="btn btn-outline-secondary btn-sm">Rasmus Lund</a>
+              
+              <a href="/skemasystem/teacher/T_SV.html"
+                 class="btn btn-outline-secondary btn-sm">Susanne Vang</a>
+              
+              <a href="/skemasystem/teacher/T_SP.html"
+                 class="btn btn-outline-secondary btn-sm">Søren Poulsen</a>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Constraint summary table -->
+    <div class="card shadow-sm mt-4">
+      <div class="card-header fw-semibold">Constraint-oversigt</div>
+      <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th style="width:36px"></th>
+              <th>Constraint</th>
+              <th class="text-center">Tjekket</th>
+              <th class="text-center">Brud</th>
+              <th>Detalje</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr class="">
+              <td class="text-center fs-5">✅</td>
+              <td class="fw-semibold small">Ugelektioner overholdt</td>
+              <td class="text-center small text-muted">67</td>
+              <td class="text-center small text-success">
+                0
+              </td>
+              <td class="small text-muted">Alle 67 hold har korrekt antal lektioner per uge.</td>
+            </tr>
+            
+            <tr class="">
+              <td class="text-center fs-5">✅</td>
+              <td class="fw-semibold small">Ingen lærer dobbeltbooket</td>
+              <td class="text-center small text-muted">156</td>
+              <td class="text-center small text-success">
+                0
+              </td>
+              <td class="small text-muted">Alle 20 lærere er fri for tidsoverlap i skemaet.</td>
+            </tr>
+            
+            <tr class="">
+              <td class="text-center fs-5">✅</td>
+              <td class="fw-semibold small">Ingen klasse dobbeltbooket</td>
+              <td class="text-center small text-muted">162</td>
+              <td class="text-center small text-success">
+                0
+              </td>
+              <td class="small text-muted">Alle 8 klasser er fri for tidsoverlap.</td>
+            </tr>
+            
+            <tr class="">
+              <td class="text-center fs-5">✅</td>
+              <td class="fw-semibold small">Ingen lokale dobbeltbooket</td>
+              <td class="text-center small text-muted">156</td>
+              <td class="text-center small text-success">
+                0
+              </td>
+              <td class="small text-muted">Alle 10 lokaler er fri for tidsoverlap.</td>
+            </tr>
+            
+            <tr class="">
+              <td class="text-center fs-5">✅</td>
+              <td class="fw-semibold small">Lærertilgængelighed overholdt</td>
+              <td class="text-center small text-muted">156</td>
+              <td class="text-center small text-success">
+                0
+              </td>
+              <td class="small text-muted">Alle lærere underviser kun i deres tilgængelige tider.</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
