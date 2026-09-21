@@ -46,6 +46,22 @@ a {
 .blog {
     width: 50%;
     margin: 20px auto;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 800px) {
+    .blog {
+        width: auto;
+        margin: 20px 1em;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    .audio-section {
+        grid-template-columns: 1fr;
+    }
 }
 
 .blog .date {
